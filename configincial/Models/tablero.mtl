@@ -1,0 +1,72 @@
+# Blender 4.3.2 MTL File: 'tablero.blend'
+# www.blender.org
+
+newmtl Base
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.915299 0.047339 0.035034
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl Color
+Ns 145.839798
+Ka 0.708661 0.708661 0.708661
+Kd 0.000000 0.000000 0.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+
+newmtl Madera1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd /mnt/Archivos/Documentos/Octavo/Proyecto-laboratorio-de-grafica/configincial/Models/textures/madera1.jpg
+
+newmtl Material
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd /mnt/Archivos/Documentos/Octavo/Proyecto-laboratorio-de-grafica/configincial/Models/textures/madera2.png
+
+newmtl Pasto
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd /mnt/Archivos/Documentos/Octavo/Proyecto-laboratorio-de-grafica/configincial/Models/textures/pasto.jpg
+
+newmtl Tierra
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd /mnt/Archivos/Documentos/Octavo/Proyecto-laboratorio-de-grafica/configincial/Models/textures/tierra.jpg
+
+newmtl azul
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
