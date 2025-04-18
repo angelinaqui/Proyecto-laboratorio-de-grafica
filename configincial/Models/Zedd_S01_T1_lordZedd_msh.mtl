@@ -1,0 +1,28 @@
+# Wavefront .mtl file  -  created by SpaceDraw
+
+# File created: 21-07-13, 13:53
+
+newmtl Zedd_S01_T1_staff_D
+Ns 20.0
+d 1.0
+Tr 0.0
+illum 2
+Ka 0.50189996 0.50189996 0.50189996 
+Kd 0.50189996 0.50189996 0.50189996 
+Ks 0.50189996 0.50189996 0.50189996 
+Ke 0.50189996 0.50189996 0.50189996 
+map_Ka Zedd_S01_T1_staff_D.png
+map_Kd Zedd_S01_T1_staff_D.png
+
+newmtl Zedd_S01_T1_lordZedd_D
+Ns 20.0
+d 1.0
+Tr 0.0
+illum 2
+Ka 0.50189996 0.50189996 0.50189996 
+Kd 0.50189996 0.50189996 0.50189996 
+Ks 0.50189996 0.50189996 0.50189996 
+Ke 0.50189996 0.50189996 0.50189996 
+map_Ka Zedd_S01_T1_lordZedd_D.png
+map_Kd Zedd_S01_T1_lordZedd_D.png
+
