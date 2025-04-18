@@ -100,6 +100,7 @@ int main( )
     Model stev((char*)"Models/stev.obj");
     Model snow((char*)"Models/snow.obj");
     Model alex((char*)"Models/alex.obj");
+    Model tab((char*)"Models/tablero.obj");
 
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     
@@ -153,6 +154,10 @@ int main( )
         model = glm::translate(model, glm::vec3(-5.0f, -0.3f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         alex.Draw(shader);
+
+        model = glm::translate(model, glm::vec3(-5.0f, -0.3f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        tab.Draw(shader);
 
         // Swap the buffers
         glfwSwapBuffers( window );

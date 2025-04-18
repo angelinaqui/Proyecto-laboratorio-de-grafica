@@ -28,6 +28,7 @@
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow *window, double xPos, double yPos);
 void DoMovement();
+void Animation();
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -104,6 +105,62 @@ glm::vec3 Light1 = glm::vec3(0);
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
+// Variables para la animación de stev
+glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
+bool animStev = false;
+float avanceStev = 0.0f; // cuánto ha avanzado desde que se activó
+const float limiteAvance = 0.6f; // límite de movimiento
+
+glm::vec3 creepPos(2.1f, 0.0f, -2.1f);
+bool animCreep = false;
+float avanceCreep = 0.0f;
+
+glm::vec3 enderPos(0.9f, 0.0f, -2.1f);
+bool animEnder = false;
+float avanceEnder = 0.0f;
+
+glm::vec3 snowPos(1.5f, 0.0f, -2.1f);
+bool animSnow = false;
+float avanceSnow = 0.0f;
+
+glm::vec3 alexPos(0.3f, -0.4f, -2.1f);
+bool animAlex = false;
+float avanceAlex = 0.0f;
+
+//glm::vec3 zomPos(1.5f, 0.0f, -1.5f);
+//bool animZom = false;
+//float avanceZom = 0.0f;
+
+glm::vec3 creep2Pos(-2.1f, 0.0f, -2.1f);
+bool animCreep2 = false;
+float avanceCreep2 = 0.0f;
+
+glm::vec3 snow2Pos(-1.5f, 0.0f, -2.1f);
+bool animSnow2 = false;
+float avanceSnow2 = 0.0f;
+
+glm::vec3 ender2Pos(-0.9f, 0.0f, -2.1f);
+bool animEnder2 = false;
+float avanceEnder2 = 0.0f;
+
+#include <vector>
+
+std::vector<glm::vec3> zomPositions = {
+	glm::vec3(-2.1f, 0.0f, -1.5f),
+	glm::vec3(-1.5f, 0.0f, -1.5f),
+	glm::vec3(-0.9f, 0.0f, -1.5f),
+	glm::vec3(-0.3f, 0.0f, -1.5f),
+	glm::vec3(0.3f, 0.0f, -1.5f),
+	glm::vec3(0.9f, 0.0f, -1.5f),
+	glm::vec3(1.5f, 0.0f, -1.5f),
+	glm::vec3(2.1f, 0.0f, -1.5f)
+};
+
+std::vector<bool> animZoms(8, false);
+std::vector<float> avanceZoms(8, 0.0f);
+
+
+
 int main()
 {
 	// Init GLFW
@@ -161,7 +218,7 @@ int main()
 	Model stev((char*)"Models/stev.obj");
 	Model snow((char*)"Models/snow.obj");
 	Model alex((char*)"Models/alex.obj");
-	Model Piso((char*)"Models/piso.obj");
+	Model Piso((char*)"Models/tablero.obj");
 
 
 
@@ -198,6 +255,7 @@ int main()
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 		DoMovement();
+		Animation();
 
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -308,6 +366,9 @@ int main()
 		//Carga de modelo 
         view = camera.GetViewMatrix();	
 		model = glm::mat4(1);
+		model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f));                    //  mueve hacia abajo
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));   //  rota sobre X
+		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));                         //  escala plano
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
 
@@ -318,33 +379,52 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 	    //Dog.Draw(lightingShader);
+		model = glm::translate(model, stevPos); // Aplica la transformación de posición
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		stev.Draw(lightingShader);
 
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::translate(model, snowPos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		snow.Draw(lightingShader);
 
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		zom.Draw(lightingShader);
+		for (size_t i = 0; i < zomPositions.size(); i++) {
+			glm::mat4 model = glm::mat4(1);
+			model = glm::translate(model, zomPositions[i]);
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			zom.Draw(lightingShader);
+		}
 
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::translate(model, enderPos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		ender.Draw(lightingShader);
 
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::translate(model, creepPos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		creep.Draw(lightingShader);
 
 		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(-5.0f, -0.3f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::translate(model, alexPos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		alex.Draw(lightingShader);
+
+		model = glm::mat4(1);
+		model = glm::translate(model, creep2Pos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		creep.Draw(lightingShader);
+
+		model = glm::mat4(1);
+		model = glm::translate(model, snow2Pos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		snow.Draw(lightingShader);
+
+		model = glm::mat4(1);
+		model = glm::translate(model, ender2Pos);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		ender.Draw(lightingShader);
+
 
 		//glDisable(GL_BLEND);  //Desactiva el canal alfa 
 		glBindVertexArray(0);
@@ -356,24 +436,6 @@ int main()
 		modelLoc = glGetUniformLocation(lampShader.Program, "model");
 		viewLoc = glGetUniformLocation(lampShader.Program, "view");
 		projLoc = glGetUniformLocation(lampShader.Program, "projection");
-
-		// Set matrices
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		model = glm::mat4(1);
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		// Draw the light object (using light's vertex attributes)
-		for (GLuint i = 0; i < 4; i++)
-		{
-			model = glm::mat4(1);
-			model = glm::translate(model, pointLightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
 		glBindVertexArray(0);
 
 
@@ -422,35 +484,61 @@ void DoMovement()
 
 
 	}
-
-	if (keys[GLFW_KEY_T])
-	{
-		pointLightPositions[0].x += 0.01f;
-	}
-	if (keys[GLFW_KEY_G])
-	{
-		pointLightPositions[0].x -= 0.01f;
-	}
-
-	if (keys[GLFW_KEY_Y])
-	{
-		pointLightPositions[0].y += 0.01f;
-	}
-
-	if (keys[GLFW_KEY_H])
-	{
-		pointLightPositions[0].y -= 0.01f;
-	}
-	if (keys[GLFW_KEY_U])
-	{
-		pointLightPositions[0].z -= 0.1f;
-	}
-	if (keys[GLFW_KEY_J])
-	{
-		pointLightPositions[0].z += 0.01f;
-	}
 	
 }
+void Animation() {
+	float paso = 0.01f;
+
+	if (animStev && avanceStev < limiteAvance) {
+		stevPos.z += paso;
+		avanceStev += paso;
+		if (avanceStev >= limiteAvance) animStev = false;
+	}
+	if (animCreep && avanceCreep < limiteAvance) {
+		creepPos.z += paso;  // Retrocede
+		avanceCreep += paso;
+		if (avanceCreep >= limiteAvance) animCreep = false;
+	}
+	if (animEnder && avanceEnder < limiteAvance) {
+		enderPos.z += paso;
+		avanceEnder += paso;
+		if (avanceEnder >= limiteAvance) animEnder = false;
+	}
+	for (size_t i = 0; i < animZoms.size(); i++) {
+		if (animZoms[i] && avanceZoms[i] < limiteAvance) {
+			zomPositions[i].z += paso;
+			avanceZoms[i] += paso;
+			if (avanceZoms[i] >= limiteAvance) animZoms[i] = false;
+		}
+	}
+	if (animSnow && avanceSnow < limiteAvance) {
+		snowPos.z += paso;
+		avanceSnow += paso;
+		if (avanceSnow >= limiteAvance) animSnow = false;
+	}
+	if (animAlex && avanceAlex < limiteAvance) {
+		alexPos.z += paso;
+		avanceAlex += paso;
+		if (avanceAlex >= limiteAvance) animAlex = false;
+	}
+	if (animCreep2 && avanceCreep2 < limiteAvance) {
+		creep2Pos.z += paso;
+		avanceCreep2 += paso;
+		if (avanceCreep2 >= limiteAvance) animCreep2 = false;
+	}
+	if (animSnow2 && avanceSnow2 < limiteAvance) {
+		snow2Pos.z += paso;
+		avanceSnow2 += paso;
+		if (avanceSnow2 >= limiteAvance) animSnow2 = false;
+	}
+	if (animEnder2 && avanceEnder2 < limiteAvance) {
+		ender2Pos.z += paso;
+		avanceEnder2 += paso;
+		if (avanceEnder2 >= limiteAvance) animEnder2 = false;
+	}
+}
+
+
 
 // Is called whenever a key is pressed/released via GLFW
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode)
@@ -484,6 +572,49 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 			Light1 = glm::vec3(0);//Cuado es solo un valor en los 3 vectores pueden dejar solo una componente
 		}
 	}
+	if (key == GLFW_KEY_V && action == GLFW_PRESS)
+	{
+		if (!animStev) {
+			animStev = true;
+			avanceStev = 0.0f; // Reinicia avance para que se mueva 2.0 cada vez
+		}
+	}
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+		animCreep2 = true;
+		avanceCreep2 = 0.0f;
+	}
+	if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+		animSnow2 = true;
+		avanceSnow2 = 0.0f;
+	}
+	if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+		animEnder2 = true;
+		avanceEnder2 = 0.0f;
+	}
+	if (key == GLFW_KEY_9 && action == GLFW_PRESS) { // creep
+		animCreep = true;
+		avanceCreep = 0.0f;
+	}
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) { // ender
+		animEnder = true;
+		avanceEnder = 0.0f;
+	}
+	if (key == GLFW_KEY_M && action == GLFW_PRESS) { // snow
+		animSnow = true;
+		avanceSnow = 0.0f;
+	}
+	if (key == GLFW_KEY_B && action == GLFW_PRESS) { // alex
+		animAlex = true;
+		avanceAlex = 0.0f;
+	}
+	if (key >= GLFW_KEY_1 && key <= GLFW_KEY_8 && action == GLFW_PRESS) {
+		int index = key - GLFW_KEY_1;
+		if (index < animZoms.size()) {
+			animZoms[index] = true;
+			avanceZoms[index] = 0.0f;
+		}
+	}
+
 }
 
 void MouseCallback(GLFWwindow *window, double xPos, double yPos)
