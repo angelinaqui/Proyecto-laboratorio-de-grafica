@@ -105,11 +105,11 @@ glm::vec3 Light1 = glm::vec3(0);
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
-// Variables para la animaciÛn de stev
+// Variables para la animaci√≥n de stev
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
 bool animStev = false;
-float avanceStev = 0.0f; // cu·nto ha avanzado desde que se activÛ
-const float limiteAvance = 0.6f; // lÌmite de movimiento
+float avanceStev = 0.0f; // cu√°nto ha avanzado desde que se activ√≥
+const float limiteAvance = 0.6f; // l√≠mite de movimiento
 
 glm::vec3 creepPos(2.1f, 0.0f, -2.1f);
 bool animCreep = false;
@@ -218,6 +218,12 @@ int main()
 	Model stev((char*)"Models/stev.obj");
 	Model snow((char*)"Models/snow.obj");
 	Model alex((char*)"Models/alex.obj");
+	Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh");
+        Model megazord((char*)"Models/POWERRANGER.obj);
+        Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj);
+        Model zack((char*)"Models/RngM_S01_T1_black_msh.obj);
+        Model dragon((char*)"Models/MMPR - Dragonzord.obj);
+        Model patrullero((char*)"Models/putty_low.fbx);
 	Model Piso((char*)"Models/tablero.obj");
 
 
@@ -379,7 +385,7 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 	    //Dog.Draw(lightingShader);
-		model = glm::translate(model, stevPos); // Aplica la transformaciÛn de posiciÛn
+		model = glm::translate(model, stevPos); // Aplica la transformaci√≥n de posici√≥n
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		stev.Draw(lightingShader);
 
