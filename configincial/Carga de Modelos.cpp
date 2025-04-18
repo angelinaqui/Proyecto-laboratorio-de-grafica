@@ -100,6 +100,12 @@ int main( )
     Model stev((char*)"Models/stev.obj");
     Model snow((char*)"Models/snow.obj");
     Model alex((char*)"Models/alex.obj");
+    Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh");
+    Model megazord((char*)"Models/POWERRANGER.obj);
+    Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj);
+    Model zack((char*)"Models/RngM_S01_T1_black_msh.obj);
+    Model dragon((char*)"Models/MMPR - Dragonzord.obj);
+    Model patrullero((char*)"Models/putty_low.fbx);
     Model tab((char*)"Models/tablero.obj");
 
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
