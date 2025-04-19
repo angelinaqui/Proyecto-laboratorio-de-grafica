@@ -159,6 +159,34 @@ std::vector<glm::vec3> zomPositions = {
 std::vector<bool> animZoms(8, false);
 std::vector<float> avanceZoms(8, 0.0f);
 
+glm::vec3 lordzPos(4.0f, 0.0f, 0.0f);
+glm::vec3 megazordPos(3.0f, 0.0f, 0.0f);
+
+std::vector<glm::vec3> esfingePositions = {
+    {2.0f, 0.0f, 0.0f},
+    {5.0f, 0.0f, 0.0f}
+};
+
+std::vector<glm::vec3> dragonPositions = {
+    {1.0f, 0.0f, 0.0f},
+    {6.0f, 0.0f, 0.0f}
+};
+
+std::vector<glm::vec3> zackPositions = {
+    {0.0f, 0.0f, 0.0f},
+    {7.0f, 0.0f, 0.0f}
+};
+
+std::vector<glm::vec3> patrulleroPositions = {
+    {0.0f, 0.0f, 1.0f},
+    {1.0f, 0.0f, 1.0f},
+    {2.0f, 0.0f, 1.0f},
+    {3.0f, 0.0f, 1.0f},
+    {4.0f, 0.0f, 1.0f},
+    {5.0f, 0.0f, 1.0f},
+    {6.0f, 0.0f, 1.0f},
+    {7.0f, 0.0f, 1.0f}
+};
 
 
 int main()
@@ -430,6 +458,46 @@ int main()
 		model = glm::translate(model, ender2Pos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		ender.Draw(lightingShader);
+
+                // Rey
+		model = glm::mat4(1);
+                model = glm::translate(glm::mat4(1.0f), lordzPos);
+                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                lordz.Draw(lightingShader);
+
+                // Reina
+                model = glm::translate(glm::mat4(1.0f), megazordPos);
+                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                megazord.Draw(lightingShader);
+
+               // Alfiles
+               for (auto& pos : esfingePositions) {
+               model = glm::translate(glm::mat4(1.0f), pos);
+               glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+               esfinge.Draw(lightingShader);
+               }
+
+              // Caballos
+              for (auto& pos : dragonPositions) {
+              model = glm::translate(glm::mat4(1.0f), pos);
+              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+              dragon.Draw(lightingShader);
+              }
+
+              // Torres
+              for (auto& pos : zackPositions) {
+              model = glm::translate(glm::mat4(1.0f), pos);
+              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+              zack.Draw(lightingShader);
+              }
+
+              // Peones
+              for (auto& pos : patrulleroPositions) {
+              model = glm::translate(glm::mat4(1.0f), pos);
+              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+              patrullero.Draw(lightingShader);
+              }
+
 
 
 		//glDisable(GL_BLEND);  //Desactiva el canal alfa 
