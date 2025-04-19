@@ -462,17 +462,20 @@ int main()
                 // Rey
 		model = glm::mat4(1);
                 model = glm::translate(glm::mat4(1.0f), lordzPos);
+		model = glm::scale(model, glm::vec3(2.0f));
                 glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
                 lordz.Draw(lightingShader);
 
                 // Reina
                 model = glm::translate(glm::mat4(1.0f), megazordPos);
+		model = glm::scale(model, glm::vec3(80.0f));
                 glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
                 megazord.Draw(lightingShader);
 
                // Alfiles
                for (auto& pos : esfingePositions) {
                model = glm::translate(glm::mat4(1.0f), pos);
+	       model = glm::scale(model, glm::vec3(1.0f));	       
                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
                esfinge.Draw(lightingShader);
                }
@@ -480,6 +483,7 @@ int main()
               // Caballos
               for (auto& pos : dragonPositions) {
               model = glm::translate(glm::mat4(1.0f), pos);
+	      model = glm::scale(model, glm::vec3(0.2f));
               glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
               dragon.Draw(lightingShader);
               }
@@ -487,6 +491,7 @@ int main()
               // Torres
               for (auto& pos : zackPositions) {
               model = glm::translate(glm::mat4(1.0f), pos);
+	      model = glm::scale(model, glm::vec3(1.0f));
               glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
               zack.Draw(lightingShader);
               }
@@ -494,6 +499,7 @@ int main()
               // Peones
               for (auto& pos : patrulleroPositions) {
               model = glm::translate(glm::mat4(1.0f), pos);
+	      model = glm::scale(model, glm::vec3(0.015f));
               glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
               patrullero.Draw(lightingShader);
               }
