@@ -101,11 +101,11 @@ int main( )
     Model snow((char*)"Models/snow.obj");
     Model alex((char*)"Models/alex.obj");
     Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh");
-    Model megazord((char*)"Models/POWERRANGER.obj);
-    Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj);
-    Model zack((char*)"Models/RngM_S01_T1_black_msh.obj);
-    Model dragon((char*)"Models/MMPR - Dragonzord.obj);
-    Model patrullero((char*)"Models/putty_low.fbx);
+    Model megazord((char*)"Models/POWERRANGER.obj");
+    Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
+    Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
+    Model dragon((char*)"Models/MMPR - Dragonzord.obj");
+    Model patrullero((char*)"Models/putty_low.fbx");
     Model tab((char*)"Models/tablero.obj");
 
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
@@ -137,29 +137,29 @@ int main( )
         // Draw the loaded model
         glm::mat4 model(1);
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        stev.Draw(shader);
+        lordz.Draw(shader);
         //ender.Draw(shader);
         //cat.Draw(shader); 
 
         model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); 
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        snow.Draw(shader);
+        megazord.Draw(shader);
 
         model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); 
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        zom.Draw(shader);
+        esfinge.Draw(shader);
 
         model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        ender.Draw(shader);
+        zack.Draw(shader);
 
         model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        creep.Draw(shader);
+        dragon.Draw(shader);
 
         model = glm::translate(model, glm::vec3(-5.0f, -0.3f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        alex.Draw(shader);
+        patrullero.Draw(shader);
 
         model = glm::translate(model, glm::vec3(-5.0f, -0.3f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

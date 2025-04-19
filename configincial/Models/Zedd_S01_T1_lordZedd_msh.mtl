@@ -23,6 +23,6 @@ Ka 0.50189996 0.50189996 0.50189996
 Kd 0.50189996 0.50189996 0.50189996 
 Ks 0.50189996 0.50189996 0.50189996 
 Ke 0.50189996 0.50189996 0.50189996 
-map_Ka Zedd_S01_T1_lordZedd_D.png
-map_Kd Zedd_S01_T1_lordZedd_D.png
+map_Ka textures/Zedd_S01_T1_lordZedd_D.png
+map_Kd textures/Zedd_S01_T1_lordZedd_D.png
 

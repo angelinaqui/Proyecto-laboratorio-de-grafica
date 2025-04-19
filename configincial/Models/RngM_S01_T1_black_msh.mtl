@@ -35,6 +35,6 @@ Ka 0.50189996 0.50189996 0.50189996
 Kd 0.50189996 0.50189996 0.50189996 
 Ks 0.50189996 0.50189996 0.50189996 
 Ke 0.50189996 0.50189996 0.50189996 
-map_Ka RngM_S01_T1_black_D.png
-map_Kd RngM_S01_T1_black_D.png
+map_Ka textures/RngM_S01_T1_black_D.png
+map_Kd textures/RngM_S01_T1_black_D.png
 
