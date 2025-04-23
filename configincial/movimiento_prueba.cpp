@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 // GLEW
 #include <GL/glew.h>
@@ -52,49 +53,7 @@ glm::vec3 pointLightPositions[] = {
 	glm::vec3(0.0f,0.0f, 0.0f)
 };
 
-float vertices[] = {
-	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	   -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	   -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-	   -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	   -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	   -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-	   -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	   -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	   -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	   -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	   -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	   -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-	   -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	   -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	   -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	   -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	   -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-};
 
 
 
@@ -143,7 +102,7 @@ glm::vec3 ender2Pos(-0.9f, 0.0f, -2.1f);
 bool animEnder2 = false;
 float avanceEnder2 = 0.0f;
 
-#include <vector>
+
 
 std::vector<glm::vec3> zomPositions = {
 	glm::vec3(-2.1f, 0.0f, -1.5f),
@@ -239,6 +198,7 @@ int main()
 	Shader lightingShader("Shader/lighting.vs", "Shader/lighting.frag");
 	Shader lampShader("Shader/lamp.vs", "Shader/lamp.frag");
 	
+	//=============================Carga de modelos=============================
 	Model Dog((char*)"Models/RedDog.obj");
 	Model creep((char*)"Models/creep.obj");
 	Model ender((char*)"Models/ender.obj");
@@ -247,13 +207,13 @@ int main()
 	Model snow((char*)"Models/snow.obj");
 	Model alex((char*)"Models/alex.obj");
 	Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh.obj");
-        Model megazord((char*)"Models/POWERRANGER.obj");
-        Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
-        Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
-        Model dragon((char*)"Models/MMPR - Dragonzord.obj");
-        Model patrullero((char*)"Models/putty_low.obj");
+    Model megazord((char*)"Models/POWERRANGER.obj");
+    Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
+    Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
+    Model dragon((char*)"Models/MMPR - Dragonzord.obj");
+    Model patrullero((char*)"Models/putty_low.obj");
 	Model Piso((char*)"Models/tablero.obj");
-
+	//==========================================================================
 
 
 	// First, set the container's VAO (and VBO)
@@ -262,7 +222,6 @@ int main()
 	glGenBuffers(1, &VBO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
