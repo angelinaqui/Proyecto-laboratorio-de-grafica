@@ -669,20 +669,36 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 
 }
 
-void MouseCallback(GLFWwindow *window, double xPos, double yPos)
+void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
-	if (firstMouse)
+	static bool rightButtonPressed = false;
+
+	// Verifica si el botón derecho está presionado
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
-		lastX = xPos;
-		lastY = yPos;
-		firstMouse = false;
+		if (firstMouse)
+		{
+			lastX = xPos;
+			lastY = yPos;
+			firstMouse = false;
+			rightButtonPressed = true;
+		}
+
+		if (rightButtonPressed)
+		{
+			float xOffset = xPos - lastX;
+			float yOffset = lastY - yPos;  // Invertido porque el eje Y va de abajo hacia arriba
+
+			lastX = xPos;
+			lastY = yPos;
+
+			camera.ProcessMouseMovement(xOffset, yOffset);
+		}
 	}
-
-	GLfloat xOffset = xPos - lastX;
-	GLfloat yOffset = lastY - yPos;  // Reversed since y-coordinates go from bottom to left
-
-	lastX = xPos;
-	lastY = yPos;
-
-	camera.ProcessMouseMovement(xOffset, yOffset);
+	else
+	{
+		// Si el botón derecho no está presionado, reinicia el estado para evitar movimientos no deseados
+		firstMouse = true;
+		rightButtonPressed = false;
+	}
 }
