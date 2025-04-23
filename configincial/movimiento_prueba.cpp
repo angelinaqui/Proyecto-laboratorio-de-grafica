@@ -55,8 +55,6 @@ glm::vec3 pointLightPositions[] = {
 
 
 
-
-
 glm::vec3 Light1 = glm::vec3(0);
 
 
@@ -64,6 +62,8 @@ glm::vec3 Light1 = glm::vec3(0);
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
+
+//=====================Variables que deinen la posicion de los modelos=====================
 // Variables para la animación de stev
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
 bool animStev = false;
@@ -86,10 +86,6 @@ glm::vec3 alexPos(0.3f, -0.4f, -2.1f);
 bool animAlex = false;
 float avanceAlex = 0.0f;
 
-//glm::vec3 zomPos(1.5f, 0.0f, -1.5f);
-//bool animZom = false;
-//float avanceZom = 0.0f;
-
 glm::vec3 creep2Pos(-2.1f, 0.0f, -2.1f);
 bool animCreep2 = false;
 float avanceCreep2 = 0.0f;
@@ -103,7 +99,7 @@ bool animEnder2 = false;
 float avanceEnder2 = 0.0f;
 
 
-
+//Vector que define y almacena la posicion de los peones zombie
 std::vector<glm::vec3> zomPositions = {
 	glm::vec3(-2.1f, 0.0f, -1.5f),
 	glm::vec3(-1.5f, 0.0f, -1.5f),
@@ -146,7 +142,7 @@ std::vector<glm::vec3> patrulleroPositions = {
     {6.0f, 0.0f, 1.0f},
     {7.0f, 0.0f, 1.0f}
 };
-
+//=========================================================================================
 
 int main()
 {
@@ -355,117 +351,134 @@ int main()
 		glm::mat4 model(1);
 
 	
+		view = camera.GetViewMatrix();
 
-		//Carga de modelo 
-        view = camera.GetViewMatrix();	
+		//=============================Dibujado del tablero=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f));                    //  mueve hacia abajo
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));   //  rota sobre X
 		model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));                         //  escala plano
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
-
+		//=================================================================================
 	
+		//===============================Dibujado del Steve==================================
 		model = glm::mat4(1);
-		//glEnable(GL_BLEND);//Avtiva la funcionalidad para trabajar el canal alfa
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
-	    //Dog.Draw(lightingShader);
 		model = glm::translate(model, stevPos); // Aplica la transformación de posición
 		glUniformMatrix4fv(glGetUniformLocation(lightingShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		stev.Draw(lightingShader);
+		//=================================================================================
 
+		//===============================Dibujado del Snowman 1==================================
 		model = glm::mat4(1);
 		model = glm::translate(model, snowPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		snow.Draw(lightingShader);
+		//=======================================================================================
 
+		//===============================Dibujado de Zombies==================================
 		for (size_t i = 0; i < zomPositions.size(); i++) {
 			glm::mat4 model = glm::mat4(1);
 			model = glm::translate(model, zomPositions[i]);
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			zom.Draw(lightingShader);
 		}
+		//=====================================================================================
 
+		//===============================Dibujado del Enderman 1=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, enderPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		ender.Draw(lightingShader);
+		//=======================================================================================
 
+		//===============================Dibujado del Creeper 1=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, creepPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		creep.Draw(lightingShader);
+		//======================================================================================
 
+		//===============================Dibujado del Alex=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, alexPos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		alex.Draw(lightingShader);
+		//=================================================================================
 
+		//===============================Dibujado del Creeper 2=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, creep2Pos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		creep.Draw(lightingShader);
+		//======================================================================================
 
+		//===============================Dibujado del Snowman 2==================================
 		model = glm::mat4(1);
 		model = glm::translate(model, snow2Pos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		snow.Draw(lightingShader);
+		//=======================================================================================
 
+		//===============================Dibujado del Enderman 2=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, ender2Pos);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		ender.Draw(lightingShader);
+		//=======================================================================================
 
-                // Rey
-		model = glm::mat4(1);
-                model = glm::translate(glm::mat4(1.0f), lordzPos);
-		model = glm::scale(model, glm::vec3(2.0f));
-                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                lordz.Draw(lightingShader);
-
-                // Reina
-                model = glm::translate(glm::mat4(1.0f), megazordPos);
+		//===============================Dibujado del Lord Z=================================
+		model = glm::mat4(1); //Rey
+        model = glm::translate(glm::mat4(1.0f), lordzPos);
+		model = glm::scale(model, glm::vec3(0.5f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        lordz.Draw(lightingShader);
+		//===================================================================================
+                
+		//===============================Dibujado del Megazord=================================
+        model = glm::translate(glm::mat4(1.0f), megazordPos); //Reyna
 		model = glm::scale(model, glm::vec3(80.0f));
-                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                megazord.Draw(lightingShader);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        megazord.Draw(lightingShader);
+		//=====================================================================================
 
-               // Alfiles
-               for (auto& pos : esfingePositions) {
-               model = glm::translate(glm::mat4(1.0f), pos);
-	       model = glm::scale(model, glm::vec3(1.0f));	       
-               glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-               esfinge.Draw(lightingShader);
-               }
+		//===============================Dibujado del Esfinge=================================      
+        for (auto& pos : esfingePositions) { // Alfiles
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::scale(model, glm::vec3(1.0f));	       
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            esfinge.Draw(lightingShader);
+        }
+		//====================================================================================
+		
+		//===============================Dibujado del Dragon================================= 
+        for (auto& pos : dragonPositions) {// Caballos
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::scale(model, glm::vec3(0.2f));
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            dragon.Draw(lightingShader);
+        }
+		//===================================================================================
 
-              // Caballos
-              for (auto& pos : dragonPositions) {
-              model = glm::translate(glm::mat4(1.0f), pos);
-	      model = glm::scale(model, glm::vec3(0.2f));
-              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-              dragon.Draw(lightingShader);
-              }
+		//===============================Dibujado de Zack=================================
+        for (auto& pos : zackPositions) { // Torres
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::scale(model, glm::vec3(1.0f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            zack.Draw(lightingShader);
+        }
+		//================================================================================
 
-              // Torres
-              for (auto& pos : zackPositions) {
-              model = glm::translate(glm::mat4(1.0f), pos);
-	      model = glm::scale(model, glm::vec3(1.0f));
-              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-              zack.Draw(lightingShader);
-              }
+		//===============================Dibujado de Patrullero=================================
+        for (auto& pos : patrulleroPositions) {
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::scale(model, glm::vec3(0.015f));
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            patrullero.Draw(lightingShader);
+        }
+		//======================================================================================
 
-              // Peones
-              for (auto& pos : patrulleroPositions) {
-              model = glm::translate(glm::mat4(1.0f), pos);
-	      model = glm::scale(model, glm::vec3(0.015f));
-              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-              patrullero.Draw(lightingShader);
-              }
-
-
-
-		//glDisable(GL_BLEND);  //Desactiva el canal alfa 
 		glBindVertexArray(0);
 	
 
