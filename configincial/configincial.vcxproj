@@ -30,7 +30,7 @@
     <None Include="Shader\modelLoading.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Carga de Modelos.cpp" />
+    <ClCompile Include="movimiento_prueba.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
