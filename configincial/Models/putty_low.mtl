@@ -9,4 +9,4 @@ newmtl lambert1
 	illum 2
 	d 1
 	Tr 0
-	map_Kd Texture_Base_color.png
+	map_Kd textures/Texture_Base_color.png
