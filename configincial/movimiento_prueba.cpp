@@ -251,7 +251,7 @@ int main()
         Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
         Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
         Model dragon((char*)"Models/MMPR - Dragonzord.obj");
-        Model patrullero((char*)"Models/putty_low.fbx");
+        Model patrullero((char*)"Models/putty_low.obj");
 	Model Piso((char*)"Models/tablero.obj");
 
 
