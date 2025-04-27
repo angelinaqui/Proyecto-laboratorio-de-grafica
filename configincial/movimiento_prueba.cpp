@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <map>
 
 // GLEW
 #include <GL/glew.h>
@@ -670,7 +671,7 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 
 
 
-// Función para convertir coordenadas del mouse a coordenadas del mundo (plano Y=0)
+// Función para convertir coordenadas del mouse a coordenadas del mundo relacionadas a las casillas del tablero (plano Y=0)
 glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY = 0.0f) {
 	// Convertir coordenadas del mouse a NDC
 	float x = (2.0f * xpos) / WIDTH - 1.0f;
@@ -693,5 +694,27 @@ glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY = 0.0f) {
 	float t = (planeY - camera.GetPosition()[1]) / rayDir.y;
 	glm::vec3 worldPos = camera.GetPosition() + t * rayDir;
 
-	return worldPos;
+	float cellSize = 0.6f; // Distancia entre casillas
+	float boardOriginX = -2.1f; // Origen del tablero en X
+	float boardOriginZ = -2.1f; // Origen del tablero en Z
+	int boardSize = 8;          // Tamaño 8x8 casillas
+
+	// Calcular casilla
+	float relativeX = (worldPos.x - boardOriginX) / cellSize;
+	float relativeZ = (worldPos.z - boardOriginZ) / cellSize;
+
+	int cellX = static_cast<int>(round(relativeX));
+	int cellZ = static_cast<int>(round(relativeZ));
+
+	// Verificar si está dentro del tablero
+	if (cellX < 0 || cellX >= boardSize || cellZ < 0 || cellZ >= boardSize) {
+		// Fuera del tablero
+		return glm::vec3(9999.0f);
+	}
+
+	// Calcular posición centrada
+	float snappedX = boardOriginX + cellX * cellSize;
+	float snappedZ = boardOriginZ + cellZ * cellSize;
+
+	return glm::vec3(snappedX, planeY, snappedZ);
 }
