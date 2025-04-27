@@ -1,6 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <map>
+#include <iomanip> // para std::fixed y std::setprecision
+
 
 // GLEW
 #include <GL/glew.h>
@@ -24,11 +27,14 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Character.h"
 
 // Function prototypes
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow *window, double xPos, double yPos);
 glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY);
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void InitCharacters();
 void DoMovement();
 void Animation();
 
@@ -46,9 +52,14 @@ bool firstMouse = true;
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 glm::vec3 spotlightPos(0.0f);
 glm::vec3 lightDir(0.0f);
+bool pick_place = true; // true->pick, false->place
 bool active;
 //Posiciones para mover sportlight
 double xpos, ypos;
+//Variables para color de spotlight
+glm::vec3 ambientSL(0.1f);
+glm::vec3 diffuseSL(1.0f);
+glm::vec3 specularSL(1.0f);
 
 glm::mat4 projection;
 glm::mat4 view;
@@ -65,6 +76,10 @@ GLfloat lastFrame = 0.0f;  	// Time of last frame
 
 //=====================Variables que deinen la posicion de los modelos=====================
 // Variables para la animación de stev
+int minecraft = 1;
+std::vector<Character> characters;
+Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
+
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
 bool animStev = false;
 float avanceStev = 0.0f; // cuánto ha avanzado desde que se activó
@@ -114,6 +129,7 @@ std::vector<glm::vec3> zomPositions = {
 std::vector<bool> animZoms(8, false);
 std::vector<float> avanceZoms(8, 0.0f);
 
+int powerRangers = 2;
 glm::vec3 lordzPos(4.0f, 0.0f, 0.0f);
 glm::vec3 megazordPos(3.0f, 0.0f, 0.0f);
 
@@ -173,6 +189,7 @@ int main()
 	// Set the required callback functions
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwSetCursorPosCallback(window, MouseCallback);
+	glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
 	// GLFW Options
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -211,7 +228,7 @@ int main()
 	Model Piso((char*)"Models/tablero.obj");
 	//==========================================================================
 
-
+	InitCharacters();
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
 	glGenVertexArrays(1, &VAO);
@@ -281,9 +298,9 @@ int main()
 		// Configuración del spotlight
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.direction"), lightDir.x, lightDir.y, lightDir.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);  // Luz ambiental baja
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);  // Luz difusa blanca brillante
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);  // Reflejos blancos
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), ambientSL.x, ambientSL.y, ambientSL.z);  // Luz ambiental baja
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), diffuseSL.x, diffuseSL.y, diffuseSL.z);  // Luz difusa blanca brillante
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.specular"), specularSL.x, specularSL.y, specularSL.z);  // Reflejos blancos
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.linear"), 0.09f);  // Atenuación moderada
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.quadratic"), 0.032f); // Atenuación cuadrática
@@ -551,7 +568,7 @@ void Animation() {
 
 
 // Is called whenever a key is pressed/released via GLFW
-void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode)
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
 	{
@@ -613,36 +630,25 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 		animSnow = true;
 		avanceSnow = 0.0f;
 	}
-	if (key == GLFW_KEY_B && action == GLFW_PRESS) { // alex
-		animAlex = true;
-		avanceAlex = 0.0f;
-	}
-	if (key >= GLFW_KEY_1 && key <= GLFW_KEY_8 && action == GLFW_PRESS) {
-		int index = key - GLFW_KEY_1;
-		if (index < animZoms.size()) {
-			animZoms[index] = true;
-			avanceZoms[index] = 0.0f;
-		}
-	}
-
 }
+
 
 void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
-	static bool rightButtonPressed = false;
+	static bool middleButtonPressed = false;
 
 	// Verifica si el botón derecho está presionado
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
 	{
 		if (firstMouse)
 		{
 			lastX = xPos;
 			lastY = yPos;
 			firstMouse = false;
-			rightButtonPressed = true;
+			middleButtonPressed = true;
 		}
 
-		if (rightButtonPressed)
+		if (middleButtonPressed)
 		{
 			float xOffset = xPos - lastX;
 			float yOffset = lastY - yPos;  // Invertido porque el eje Y va de abajo hacia arriba
@@ -657,7 +663,7 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 	{
 		// Si el botón derecho no está presionado, reinicia el estado para evitar movimientos no deseados
 		firstMouse = true;
-		rightButtonPressed = false;
+		middleButtonPressed = false;
 	}
 }
 
@@ -709,4 +715,75 @@ glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY = 0.0f) {
 	float snappedZ = boardOriginZ + cellZ * cellSize;
 
 	return glm::vec3(snappedX, planeY, snappedZ);
+}
+
+static bool IsClose(float a, float b, float epsilon = 0.05f) {
+	return fabs(a - b) < epsilon;
+}
+
+
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		glfwGetCursorPos(window, &xpos, &ypos);
+		glm::vec3 posClic = ScreenToWorld(xpos, ypos, 0.0f);
+		if (pick_place) {
+			// Intentar agarrar un personaje
+			for (auto& character : characters) {
+				if (IsClose(posClic.x, character.position->x) && IsClose(posClic.z, character.position->z)) {
+					std::cout << "Agarrar " << character.name << std::endl;
+					selectedCharacter = &character;
+					diffuseSL.y = diffuseSL.z = 0.0f;
+					pick_place = false;;
+					break;
+				}
+			}
+		}
+		else {
+			// Soltar personaje
+			if (selectedCharacter != nullptr) {
+				//Verificacion de si hay un personaje amigo en la casilla a la que se quiere mover
+				for (auto& character : characters) {
+					if (IsClose(posClic.x, character.position->x) && IsClose(posClic.z, character.position->z) && character.team == selectedCharacter->team) {
+						std::cout  << character.name << " ya se encuentra en esa casilla" << std::endl;
+						selectedCharacter = nullptr;
+						diffuseSL.y = diffuseSL.z = 1.0f;
+						pick_place = true;
+						return;
+					}
+				}
+				std::cout << "Poner " << selectedCharacter->name << std::endl;
+				selectedCharacter->position->x = posClic.x;
+				selectedCharacter->position->z = posClic.z;
+				diffuseSL.y = diffuseSL.z = 1.0f;
+				selectedCharacter = nullptr;
+				pick_place = true;
+			}
+		}
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+		// Cancelar la selección
+		if (selectedCharacter != nullptr) {
+			std::cout << "Desagarrar " << selectedCharacter->name << std::endl;
+			diffuseSL.y = diffuseSL.z = 1.0f;
+			selectedCharacter = nullptr;
+			pick_place = true;
+		}
+	}
+}
+
+
+void InitCharacters() {
+	characters.push_back({ "Steve", &stevPos, minecraft});
+	characters.push_back({ "Creep", &creepPos, minecraft });
+	characters.push_back({ "Ender", &enderPos, minecraft });
+	characters.push_back({ "Snow", &snowPos, minecraft });
+	characters.push_back({ "Alex", &alexPos, minecraft });
+	characters.push_back({ "Creep2", &creep2Pos, minecraft });
+	characters.push_back({ "Snow2", &snow2Pos, minecraft });
+	characters.push_back({ "Ender2", &ender2Pos, minecraft });
+	// También agregamos los zombies
+	for (int i = 0; i < zomPositions.size(); ++i) {
+		characters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft });
+	}
 }
