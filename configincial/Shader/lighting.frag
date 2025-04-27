@@ -75,9 +75,11 @@ void main( )
     vec3 result = CalcDirLight( dirLight, norm, viewDir );
     
     // Point lights
-    for ( int i = 0; i < NUMBER_OF_POINT_LIGHTS; i++ )
-    {
-        result += CalcPointLight( pointLights[i], norm, FragPos, viewDir );
+    for (int i = 0; i < NUMBER_OF_POINT_LIGHTS; i++) {
+        // Verifica si la luz tiene una intensidad no nula antes de sumar su contribución
+        if (length(pointLights[i].ambient) > 0.0 || length(pointLights[i].diffuse) > 0.0 || length(pointLights[i].specular) > 0.0) {
+            result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+        }
     }
     
     // Spot light
