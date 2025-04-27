@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include <map>
 
 // GLEW
 #include <GL/glew.h>
@@ -48,6 +47,8 @@ glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 glm::vec3 spotlightPos(0.0f);
 glm::vec3 lightDir(0.0f);
 bool active;
+//Posiciones para mover sportlight
+double xpos, ypos;
 
 glm::mat4 projection;
 glm::mat4 view;
@@ -273,12 +274,12 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.0f, 0.0f, 0.0f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"),0.0f, 0.0f, 0.0f);
 
-		if (active) {
-			lightPos = glm::vec3(spotlightPos.x, spotlightPos.y + 3.0f, spotlightPos.z);
-			lightDir = glm::normalize(spotlightPos - lightPos);
-			// Configuración del spotlight
-			glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
-		}
+		glfwGetCursorPos(window, &xpos, &ypos);
+		spotlightPos = ScreenToWorld(xpos, ypos, 0.0f);
+		lightPos = glm::vec3(spotlightPos.x, spotlightPos.y + 3.0f, spotlightPos.z);
+		lightDir = glm::normalize(spotlightPos - lightPos);
+		// Configuración del spotlight
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.direction"), lightDir.x, lightDir.y, lightDir.z);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);  // Luz ambiental baja
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);  // Luz difusa blanca brillante
@@ -651,15 +652,6 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 
 			camera.ProcessMouseMovement(xOffset, yOffset);
 		}
-	}
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
-		spotlightPos = ScreenToWorld(xpos, ypos, 0.0f);
-		active  = true;
-		PosMouseW = ScreenToWorld(xpos, ypos, 0.0f);
-		std::cout << "[CLICK] Posicion en el plano: ("
-			<< PosMouseW.x << ", " << PosMouseW.y << ", " << PosMouseW.z << ")" << std::endl;
 	}
 	else
 	{
