@@ -28,6 +28,7 @@
 // Function prototypes
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow *window, double xPos, double yPos);
+glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY);
 void DoMovement();
 void Animation();
 
@@ -43,18 +44,15 @@ bool keys[1024];
 bool firstMouse = true;
 // Light attributes
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
+glm::vec3 spotlightPos(0.0f);
+glm::vec3 lightDir(0.0f);
 bool active;
 
-// Positions of the point lights
-glm::vec3 pointLightPositions[] = {
-	glm::vec3(0.0f,0.0f, 0.0f),
-	glm::vec3(0.0f,0.0f, 0.0f),
-	glm::vec3(0.0f,0.0f,  0.0f),
-	glm::vec3(0.0f,0.0f, 0.0f)
-};
-
-
-
+glm::mat4 projection;
+glm::mat4 view;
+glm::vec3 PosMouseW;
+// Variable para almacenar el último punto clickeado
+glm::vec3 lastClickPos(0.0f);
 glm::vec3 Light1 = glm::vec3(0);
 
 
@@ -230,7 +228,7 @@ int main()
 	glUniform1i(glGetUniformLocation(lightingShader.Program, "Material.difuse"), 0);
 	glUniform1i(glGetUniformLocation(lightingShader.Program, "Material.specular"), 1);
 
-	glm::mat4 projection = glm::perspective(camera.GetZoom(), (GLfloat)SCREEN_WIDTH / (GLfloat)SCREEN_HEIGHT, 0.1f, 100.0f);
+	projection = glm::perspective(camera.GetZoom(), (GLfloat)SCREEN_WIDTH / (GLfloat)SCREEN_HEIGHT, 0.1f, 100.0f);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -269,73 +267,31 @@ int main()
 
 
 		// Directional light
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"),1.0f,1.0f,1.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), 0.2f, 1.0f, 0.3f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.5f, 0.5f, 0.5f); // Ambiente tenue
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.0f, 0.0f, 0.0f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"),0.0f, 0.0f, 0.0f);
 
-
-		// Point light 1
-	    glm::vec3 lightColor;
-		lightColor.x= abs(sin(glfwGetTime() *Light1.x));
-		lightColor.y= abs(sin(glfwGetTime() *Light1.y));
-		lightColor.z= sin(glfwGetTime() *Light1.z);
-
-		
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].ambient"), lightColor.x,lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].diffuse"), lightColor.x,lightColor.y,lightColor.z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[0].specular"), 1.0f, 1.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].linear"), 0.045f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[0].quadratic"),0.075f);
-
-
-
-		// Point light 2
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].diffuse"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[1].specular"), 0.0f, 0.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[1].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[1].linear"), 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[1].quadratic"), 0.0f);
-
-		// Point light 3
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].ambient"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].diffuse"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[2].specular"), 0.0f, 0.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[2].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[2].linear"), 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[2].quadratic"), 0.0f);
-
-		// Point light 4
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].ambient"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].diffuse"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "pointLights[3].specular"), 0.0f, 0.0f, 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[3].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[3].linear"), 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "pointLights[3].quadratic"), 0.0f);
-
-		// SpotLight
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.position"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.direction"), camera.GetFront().x, camera.GetFront().y, camera.GetFront().z);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.specular"),0.0f, 0.0f, 0.0f);
+		if (active) {
+			lightPos = glm::vec3(spotlightPos.x, spotlightPos.y + 3.0f, spotlightPos.z);
+			lightDir = glm::normalize(spotlightPos - lightPos);
+			// Configuración del spotlight
+			glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
+		}
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.direction"), lightDir.x, lightDir.y, lightDir.z);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);  // Luz ambiental baja
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);  // Luz difusa blanca brillante
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);  // Reflejos blancos
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.linear"), 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.quadratic"), 0.0f);
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(0.0f)));
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(0.0f)));
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.linear"), 0.09f);  // Atenuación moderada
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.quadratic"), 0.032f); // Atenuación cuadrática
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(5.0f)));
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(7.0f)));
 
 		// Set material properties
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 16.0f);
 
 		// Create camera transformations
-		glm::mat4 view;
 		view = camera.GetViewMatrix();
 
 		// Get the uniform locations
@@ -428,56 +384,56 @@ int main()
 		ender.Draw(lightingShader);
 		//=======================================================================================
 
-		//===============================Dibujado del Lord Z=================================
-		model = glm::mat4(1); //Rey
-        model = glm::translate(glm::mat4(1.0f), lordzPos);
-		model = glm::scale(model, glm::vec3(0.5f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        lordz.Draw(lightingShader);
-		//===================================================================================
-                
-		//===============================Dibujado del Megazord=================================
-        model = glm::translate(glm::mat4(1.0f), megazordPos); //Reyna
-		model = glm::scale(model, glm::vec3(80.0f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        megazord.Draw(lightingShader);
-		//=====================================================================================
+		////===============================Dibujado del Lord Z=================================
+		//model = glm::mat4(1); //Rey
+  //      model = glm::translate(glm::mat4(1.0f), lordzPos);
+		//model = glm::scale(model, glm::vec3(0.5f));
+  //      glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+  //      lordz.Draw(lightingShader);
+		////===================================================================================
+  //              
+		////===============================Dibujado del Megazord=================================
+  //      model = glm::translate(glm::mat4(1.0f), megazordPos); //Reyna
+		//model = glm::scale(model, glm::vec3(80.0f));
+  //      glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+  //      megazord.Draw(lightingShader);
+		////=====================================================================================
 
-		//===============================Dibujado del Esfinge=================================      
-        for (auto& pos : esfingePositions) { // Alfiles
-			model = glm::translate(glm::mat4(1.0f), pos);
-			model = glm::scale(model, glm::vec3(1.0f));	       
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            esfinge.Draw(lightingShader);
-        }
-		//====================================================================================
-		
-		//===============================Dibujado del Dragon================================= 
-        for (auto& pos : dragonPositions) {// Caballos
-			model = glm::translate(glm::mat4(1.0f), pos);
-			model = glm::scale(model, glm::vec3(0.2f));
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            dragon.Draw(lightingShader);
-        }
-		//===================================================================================
+		////===============================Dibujado del Esfinge=================================      
+  //      for (auto& pos : esfingePositions) { // Alfiles
+		//	model = glm::translate(glm::mat4(1.0f), pos);
+		//	model = glm::scale(model, glm::vec3(1.0f));	       
+  //          glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+  //          esfinge.Draw(lightingShader);
+  //      }
+		////====================================================================================
+		//
+		////===============================Dibujado del Dragon================================= 
+  //      for (auto& pos : dragonPositions) {// Caballos
+		//	model = glm::translate(glm::mat4(1.0f), pos);
+		//	model = glm::scale(model, glm::vec3(0.2f));
+  //          glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+  //          dragon.Draw(lightingShader);
+  //      }
+		////===================================================================================
 
-		//===============================Dibujado de Zack=================================
-        for (auto& pos : zackPositions) { // Torres
-			model = glm::translate(glm::mat4(1.0f), pos);
-			model = glm::scale(model, glm::vec3(1.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            zack.Draw(lightingShader);
-        }
-		//================================================================================
+		////===============================Dibujado de Zack=================================
+  //      for (auto& pos : zackPositions) { // Torres
+		//	model = glm::translate(glm::mat4(1.0f), pos);
+		//	model = glm::scale(model, glm::vec3(1.0f));
+		//	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+  //          zack.Draw(lightingShader);
+  //      }
+		////================================================================================
 
-		//===============================Dibujado de Patrullero=================================
-        for (auto& pos : patrulleroPositions) {
-			model = glm::translate(glm::mat4(1.0f), pos);
-			model = glm::scale(model, glm::vec3(0.015f));
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            patrullero.Draw(lightingShader);
-        }
-		//======================================================================================
+		////===============================Dibujado de Patrullero=================================
+  //      for (auto& pos : patrulleroPositions) {
+		//	model = glm::translate(glm::mat4(1.0f), pos);
+		//	model = glm::scale(model, glm::vec3(0.015f));
+  //          glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+  //          patrullero.Draw(lightingShader);
+  //      }
+		////======================================================================================
 
 		glBindVertexArray(0);
 	
@@ -695,10 +651,47 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 			camera.ProcessMouseMovement(xOffset, yOffset);
 		}
 	}
+	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		spotlightPos = ScreenToWorld(xpos, ypos, 0.0f);
+		active  = true;
+		PosMouseW = ScreenToWorld(xpos, ypos, 0.0f);
+		std::cout << "[CLICK] Posicion en el plano: ("
+			<< PosMouseW.x << ", " << PosMouseW.y << ", " << PosMouseW.z << ")" << std::endl;
+	}
 	else
 	{
 		// Si el botón derecho no está presionado, reinicia el estado para evitar movimientos no deseados
 		firstMouse = true;
 		rightButtonPressed = false;
 	}
+}
+
+
+
+// Función para convertir coordenadas del mouse a coordenadas del mundo (plano Y=0)
+glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY = 0.0f) {
+	// Convertir coordenadas del mouse a NDC
+	float x = (2.0f * xpos) / WIDTH - 1.0f;
+	float y = 1.0f - (2.0f * ypos) / HEIGHT;
+
+	// Crear vector en espacio de clip
+	glm::vec4 rayClip = glm::vec4(x, y, -1.0f, 1.0f);
+
+	// Convertir a espacio de ojos (eye space)
+	glm::mat4 invProjection = glm::inverse(projection);
+	glm::vec4 rayEye = invProjection * rayClip;
+	rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+
+	// Convertir a espacio del mundo
+	glm::mat4 invView = glm::inverse(view);
+	glm::vec4 rayWorld = invView * rayEye;
+	glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld));
+
+	// Calcular intersección con el plano Y = planeY
+	float t = (planeY - camera.GetPosition()[1]) / rayDir.y;
+	glm::vec3 worldPos = camera.GetPosition() + t * rayDir;
+
+	return worldPos;
 }
