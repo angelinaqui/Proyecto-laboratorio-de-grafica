@@ -64,8 +64,6 @@ public:
             cells[cellDestination.first][cellDestination.second].character->position->x = 999.0f;
             cells[cellDestination.first][cellDestination.second].character->position->z = 999.0f; //Desaparece de forma rudimentaria la pieza xd
         }
-
-        std::cout << "En [" << cellOrigin.first << "][" << cellOrigin.second << "] esta " << piece->name << std::endl;
         piece->position->x = destinationX;
         piece->position->z = destinationZ;
         std::cout << "Se mueve " << piece->name << std::endl;
@@ -99,8 +97,8 @@ public:
 
     void initMinecraftBoard(std::vector<Character>& minecraftCharacters) {
         // Verificar que hay suficientes personajes
-        if (minecraftCharacters.size() < 16) {
-            std::cerr << "Error: No hay suficientes personajes para asignar al tablero.\n";
+        if (minecraftCharacters.size() != 16) {
+            std::cerr << "Error: Numero de personajes no admitido por el juego.\n";
             return;
         }
         // Asignar personajes principales a la primera fila (cells[0][0] a cells[0][7])

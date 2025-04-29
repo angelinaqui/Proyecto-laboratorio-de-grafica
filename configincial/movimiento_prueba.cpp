@@ -74,10 +74,21 @@ glm::vec3 Light1 = glm::vec3(0);
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
+//======================Constantes para definir las piezas y eqipos=======================
+const unsigned int Torre = 1;
+const unsigned int Caballo = 2;
+const unsigned int Alfil = 3;
+const unsigned int Reyna = 4;
+const unsigned int Rey = 5;
+const unsigned int Peon = 6;
+const unsigned int minecraft = 1;
+const unsigned int powerRangers = 2;
+//========================================================================================
+
 
 //=====================Variables que deinen la posicion de los modelos=====================
 // Variables para la animación de stev
-int minecraft = 1;
+
 std::vector<Character> minecraftCharacters;
 Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
 Board board;
@@ -131,7 +142,6 @@ std::vector<glm::vec3> zomPositions = {
 std::vector<bool> animZoms(8, false);
 std::vector<float> avanceZoms(8, 0.0f);
 
-int powerRangers = 2;
 glm::vec3 lordzPos(4.0f, 0.0f, 0.0f);
 glm::vec3 megazordPos(3.0f, 0.0f, 0.0f);
 
@@ -739,7 +749,6 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 		if (pick_place) {
 			// Si hay un personaje en la casilla, lo agarras
 			if (board.haveCharacter(cell.first, cell.second)) {
-				std::cout << "Agarrar " << board.cells[cell.first][cell.second].character->name << std::endl;
 				diffuseSL.y = diffuseSL.z = 0.0f;			//Cambia la luz de color
 				pick_place = false;						    //Cambiar de modo
 				originX = posClic.x;
@@ -766,16 +775,16 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 
 void InitMinecraftCharacters() {
-	minecraftCharacters.push_back({ "Creeper 2", &creep2Pos, minecraft });   // cells[0][0]
-	minecraftCharacters.push_back({ "Snowman 2", &snow2Pos, minecraft });    // cells[0][1]
-	minecraftCharacters.push_back({ "Enderman 2", &ender2Pos, minecraft });   // cells[0][2]
-	minecraftCharacters.push_back({ "Steve", &stevPos, minecraft });     // cells[0][3]
-	minecraftCharacters.push_back({ "Alex", &alexPos, minecraft });     // cells[0][4]
-	minecraftCharacters.push_back({ "Enderman", &enderPos, minecraft }); // cells[0][5]
-	minecraftCharacters.push_back({ "Snowman", &snowPos, minecraft });  // cells[0][6]
-	minecraftCharacters.push_back({ "Creeper", &creepPos, minecraft }); // cells[0][7]
+	minecraftCharacters.push_back({ "Creeper 2", &creep2Pos, minecraft, Torre });   // cells[0][0]
+	minecraftCharacters.push_back({ "Snowman 2", &snow2Pos, minecraft, Caballo });    // cells[0][1]
+	minecraftCharacters.push_back({ "Enderman 2", &ender2Pos, minecraft, Alfil });   // cells[0][2]
+	minecraftCharacters.push_back({ "Steve", &stevPos, minecraft, Rey });     // cells[0][3]
+	minecraftCharacters.push_back({ "Alex", &alexPos, minecraft, Reyna });     // cells[0][4]
+	minecraftCharacters.push_back({ "Enderman", &enderPos, minecraft, Alfil }); // cells[0][5]
+	minecraftCharacters.push_back({ "Snowman", &snowPos, minecraft, Caballo });  // cells[0][6]
+	minecraftCharacters.push_back({ "Creeper", &creepPos, minecraft, Torre }); // cells[0][7]
 	// Zombies (se asignarán a otras celdas después)
 	for (int i = 0; i < zomPositions.size(); ++i) {
-		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft });
+		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon});
 	}
 }
