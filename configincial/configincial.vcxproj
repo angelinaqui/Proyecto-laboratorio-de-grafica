@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Board.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\lamp.frag" />

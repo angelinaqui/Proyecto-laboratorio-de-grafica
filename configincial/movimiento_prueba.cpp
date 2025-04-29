@@ -28,13 +28,14 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Character.h"
+#include "Board.h"
 
 // Function prototypes
 void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow *window, double xPos, double yPos);
 glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void InitCharacters();
+void InitMinecraftCharacters();
 void DoMovement();
 void Animation();
 
@@ -56,16 +57,16 @@ bool pick_place = true; // true->pick, false->place
 bool active;
 //Posiciones para mover sportlight
 double xpos, ypos;
+// Coordenadas para mover personaje
+float originX, originZ, destinationX, destinationZ = 999.0f;
 //Variables para color de spotlight
-glm::vec3 ambientSL(0.1f);
+glm::vec3 ambientSL(0.5f);
 glm::vec3 diffuseSL(1.0f);
 glm::vec3 specularSL(1.0f);
 
 glm::mat4 projection;
 glm::mat4 view;
-glm::vec3 PosMouseW;
 // Variable para almacenar el último punto clickeado
-glm::vec3 lastClickPos(0.0f);
 glm::vec3 Light1 = glm::vec3(0);
 
 
@@ -77,8 +78,9 @@ GLfloat lastFrame = 0.0f;  	// Time of last frame
 //=====================Variables que deinen la posicion de los modelos=====================
 // Variables para la animación de stev
 int minecraft = 1;
-std::vector<Character> characters;
+std::vector<Character> minecraftCharacters;
 Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
+Board board;
 
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
 bool animStev = false;
@@ -228,7 +230,9 @@ int main()
 	Model Piso((char*)"Models/tablero.obj");
 	//==========================================================================
 
-	InitCharacters();
+	InitMinecraftCharacters();
+	board.initMinecraftBoard(minecraftCharacters);
+
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
 	glGenVertexArrays(1, &VAO);
@@ -304,8 +308,8 @@ int main()
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.linear"), 0.09f);  // Atenuación moderada
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.quadratic"), 0.032f); // Atenuación cuadrática
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(5.0f)));
-		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(7.0f)));
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.cutOff"), glm::cos(glm::radians(4.0f)));
+		glUniform1f(glGetUniformLocation(lightingShader.Program, "spotLight.outerCutOff"), glm::cos(glm::radians(6.0f)));
 
 		// Set material properties
 		glUniform1f(glGetUniformLocation(lightingShader.Program, "material.shininess"), 16.0f);
@@ -726,64 +730,52 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		glfwGetCursorPos(window, &xpos, &ypos);
-		glm::vec3 posClic = ScreenToWorld(xpos, ypos, 0.0f);
+		glm::vec3 posClic = ScreenToWorld(xpos, ypos, 0.0f); // Se obtiene la posicion en el tablero
+
+		std::cout << "(" << posClic.x << "," << posClic.y << "," << posClic.z << ")" << std::endl;
+		if (posClic.x == 0.999f) return;	// Posicion fuera del tablero, no se hace nada
+		auto cell = board.getCellFromPosition(posClic.x, posClic.z);
+		// Si puedes agarrar un personaje
 		if (pick_place) {
-			// Intentar agarrar un personaje
-			for (auto& character : characters) {
-				if (IsClose(posClic.x, character.position->x) && IsClose(posClic.z, character.position->z)) {
-					std::cout << "Agarrar " << character.name << std::endl;
-					selectedCharacter = &character;
-					diffuseSL.y = diffuseSL.z = 0.0f;
-					pick_place = false;;
-					break;
-				}
+			// Si hay un personaje en la casilla, lo agarras
+			if (board.haveCharacter(cell.first, cell.second)) {
+				std::cout << "Agarrar " << board.cells[cell.first][cell.second].character->name << std::endl;
+				diffuseSL.y = diffuseSL.z = 0.0f;			//Cambia la luz de color
+				pick_place = false;						    //Cambiar de modo
+				originX = posClic.x;
+				originZ = posClic.z;						// Guarda las coordenadas de inicio
 			}
 		}
-		else {
-			// Soltar personaje
-			if (selectedCharacter != nullptr) {
-				//Verificacion de si hay un personaje amigo en la casilla a la que se quiere mover
-				for (auto& character : characters) {
-					if (IsClose(posClic.x, character.position->x) && IsClose(posClic.z, character.position->z) && character.team == selectedCharacter->team) {
-						std::cout  << character.name << " ya se encuentra en esa casilla" << std::endl;
-						selectedCharacter = nullptr;
-						diffuseSL.y = diffuseSL.z = 1.0f;
-						pick_place = true;
-						return;
-					}
-				}
-				std::cout << "Poner " << selectedCharacter->name << std::endl;
-				selectedCharacter->position->x = posClic.x;
-				selectedCharacter->position->z = posClic.z;
-				diffuseSL.y = diffuseSL.z = 1.0f;
-				selectedCharacter = nullptr;
-				pick_place = true;
-			}
+		else{
+			// Si tienes un personaje seleccionado, intenta soltarlo
+			destinationX = posClic.x;
+			destinationZ = posClic.z;			// Coordenadas de destino
+			if(!board.move(originX, originZ, destinationX, destinationZ)) return;	//Si no se pudo mover, termina
+			diffuseSL.y = diffuseSL.z = 1.0f;		// Se resetea la luz
+			pick_place = true;						// Se cambia de modo
 		}
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		// Cancelar la selección
-		if (selectedCharacter != nullptr) {
-			std::cout << "Desagarrar " << selectedCharacter->name << std::endl;
+		if (!pick_place) {		// Si se tiene un personaje agarrado
 			diffuseSL.y = diffuseSL.z = 1.0f;
-			selectedCharacter = nullptr;
 			pick_place = true;
 		}
 	}
 }
 
 
-void InitCharacters() {
-	characters.push_back({ "Steve", &stevPos, minecraft});
-	characters.push_back({ "Creep", &creepPos, minecraft });
-	characters.push_back({ "Ender", &enderPos, minecraft });
-	characters.push_back({ "Snow", &snowPos, minecraft });
-	characters.push_back({ "Alex", &alexPos, minecraft });
-	characters.push_back({ "Creep2", &creep2Pos, minecraft });
-	characters.push_back({ "Snow2", &snow2Pos, minecraft });
-	characters.push_back({ "Ender2", &ender2Pos, minecraft });
-	// También agregamos los zombies
+void InitMinecraftCharacters() {
+	minecraftCharacters.push_back({ "Creeper 2", &creep2Pos, minecraft });   // cells[0][0]
+	minecraftCharacters.push_back({ "Snowman 2", &snow2Pos, minecraft });    // cells[0][1]
+	minecraftCharacters.push_back({ "Enderman 2", &ender2Pos, minecraft });   // cells[0][2]
+	minecraftCharacters.push_back({ "Steve", &stevPos, minecraft });     // cells[0][3]
+	minecraftCharacters.push_back({ "Alex", &alexPos, minecraft });     // cells[0][4]
+	minecraftCharacters.push_back({ "Enderman", &enderPos, minecraft }); // cells[0][5]
+	minecraftCharacters.push_back({ "Snowman", &snowPos, minecraft });  // cells[0][6]
+	minecraftCharacters.push_back({ "Creeper", &creepPos, minecraft }); // cells[0][7]
+	// Zombies (se asignarán a otras celdas después)
 	for (int i = 0; i < zomPositions.size(); ++i) {
-		characters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft });
+		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft });
 	}
 }
