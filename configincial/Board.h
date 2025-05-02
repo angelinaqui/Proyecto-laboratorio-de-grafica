@@ -122,6 +122,7 @@ public:
     }
 
     // La metodologia para revisar si el movimiento es valido, es primero descartar todos los movimientos invalidos evidentes
+    // TODO: Turnos de juego
     bool check_move(Character* piece, int cellOriginI, int cellOriginJ, int cellDestinationI, int cellDestinationJ) {
         if (cellOriginI == -1 || cellOriginJ == -1
             || cellDestinationI == -1 || cellDestinationJ == -1) return false;
