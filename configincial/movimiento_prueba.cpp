@@ -90,7 +90,7 @@ const unsigned int powerRangers = 2;
 // Variables para la animación de stev
 
 std::vector<Character> minecraftCharacters;
-Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
+Character* selectedMinecraftCharacter = nullptr; // El personaje actualmente agarrado
 Board board;
 
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
@@ -145,11 +145,10 @@ std::vector<float> avanceZoms(8, 0.0f);
 //MM Power Rangers
 
 std::vector<Character> powerRangersCharacters;
-Character* selectedCharacter = nullptr;
-Board board;
+Character* selectedPowerRangersCharacter = nullptr;
 
 glm::vec3 lordzPos(3.5f, 0.0f, 2.1f);
-bool animlordz = flase;
+bool animlordz = false;
 float avancelordz = 0.0f;
 
 
@@ -162,7 +161,7 @@ std::vector<glm::vec3> esfingePositions = {
     {4.9f, 0.0f, 2.1f}
 };
 std::vector<bool> animesfinge(2, false);
-std::vector<float> avanceesfinge(2, 0.0f)
+std::vector<float> avanceesfinge(2, 0.0f);
 
 std::vector<glm::vec3> dragonPositions = {
     {1.5f, 0.0f, 2.1f},
@@ -905,18 +904,19 @@ void InitMinecraftCharacters() {
 		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon});
 	}
 
-void InitPowerRangersCharacters(){
-	powerRangersCharacters.push_back("Lord Zedd ", &lordzPos, powerRangers, Rey});
-	powerRangersCharacters.push_back("Megazord ", &megazordPos, powerRangers, Reina};
-	for (size_t i = 0; <esfingePositions.size(); ++i) {
-            powerRangersCharacters.push_back({ "Esfinge " + std::to_string(i+1), &esfingePositions[i], powerRangers, Alfil });
-        }
-	for (size_t i = 0; i < dragonPositions.size(); ++i) {
-            powerRangersCharacters.push_back({ "Dragonzord " + std::to_string(i+1), &dragonPositions[i], powerRangers, Caballo });
+	void InitPowerRangersCharacters() {
+		powerRangersCharacters.push_back({ "Lord Zedd", &lordzPos, powerRangers, Rey });
+		powerRangersCharacters.push_back({ "Megazord", &megazordPos, powerRangers, Reina });
+		for (size_t i = 0; i < esfingePositions.size(); ++i) {
+			powerRangersCharacters.push_back({ "Esfinge " + std::to_string(i + 1), &esfingePositions[i], powerRangers, Alfil });
+		}
+		for (size_t i = 0; i < dragonPositions.size(); ++i) {
+			powerRangersCharacters.push_back({ "Dragonzord " + std::to_string(i + 1), &dragonPositions[i], powerRangers, Caballo });
+		}
+		for (size_t i = 0; i < zackPositions.size(); ++i) {
+			powerRangersCharacters.push_back({ "Zack " + std::to_string(i + 1), &zackPositions[i], powerRangers, Torre });
+		}
+		for (size_t i = 0; i < patrulleroPositions.size(); ++i) {
+			powerRangersCharacters.push_back({ "Patrullero " + std::to_string(i + 1), &patrulleroPositions[i], powerRangers, Peon });
+		}
 	}
-	for (size_t i = 0; i < zackPositions.size(); ++i) {
-            powerRangersCharacters.push_back({ "Zack " + std::to_string(i+1), &zackPositions[i], powerRangers, Torre });
-        }
-	for (size_t i = 0; i < patrulleroPositions.size(); ++i) {
-            powerRangersCharacters.push_back({ "Patrullero " + std::to_string(i+1), &patrulleroPositions[i], powerRangers, Peon });
-}
