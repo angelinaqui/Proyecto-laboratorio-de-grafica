@@ -142,23 +142,41 @@ std::vector<glm::vec3> zomPositions = {
 std::vector<bool> animZoms(8, false);
 std::vector<float> avanceZoms(8, 0.0f);
 
+//MM Power Rangers
+
+std::vector<Character> powerRangersCharacters;
+Character* selectedCharacter = nullptr;
+Board board;
+
 glm::vec3 lordzPos(3.5f, 0.0f, 2.1f);
+bool animlordz = flase;
+float avancelordz = 0.0f;
+
+
 glm::vec3 megazordPos(3.5f, 0.0f, 1.4f);
+bool animmegazord = false;
+float avancemegazord = 0.0f;
 
 std::vector<glm::vec3> esfingePositions = {
     {2.1f, 0.0f, 2.1f},
     {4.9f, 0.0f, 2.1f}
 };
+std::vector<bool> animesfinge(2, false);
+std::vector<float> avanceesfinge(2, 0.0f)
 
 std::vector<glm::vec3> dragonPositions = {
     {1.5f, 0.0f, 2.1f},
     {5.5f, 0.0f, 2.1f}
 };
+std::vector<bool> animdragon(2, false);
+std::vector<float> avancedragon(2, 0.0f);
 
 std::vector<glm::vec3> zackPositions = {
     {0.3f, 0.0f, 2.1f},
     {6.7f, 0.0f, 2.1f}
 };
+std::vector<bool> animzack(2, false);
+std::vector<float> avancezack(2, 0.0f);
 
 std::vector<glm::vec3> patrulleroPositions = {
     {0.3f, 0.0f, 1.5f},
@@ -170,6 +188,8 @@ std::vector<glm::vec3> patrulleroPositions = {
     {6.7f, 0.0f, 1.5f},
     {7.9f, 0.0f, 1.5f}
 };
+std::vector<bool> animpatrullero(8, false);
+std::vector<float> avancepatrullero(8, 0.0f);
 //=========================================================================================
 
 int main()
@@ -584,6 +604,60 @@ void Animation() {
 	}
 }
 
+// Animaciones de Power Rangers
+const float powerRangersStep = 0.01f; // Velocidad de movimiento
+const float powerRangersLimit = 0.6f; // Límite de movimiento
+
+// Rey (Lord Zedd)
+if (animlordz && avancelordz < powerRangersLimit) {
+    lordzPos.z -= powerRangersStep; // Mueve hacia adelante (coordenada Z disminuye)
+    avanceLordZ += powerRangersStep;
+    if (avancelordz >= powerRangersLimit) animlordz = false;
+}
+
+// Reina (Megazord)
+if (animmegazord && avancemegazord < powerRangersLimit) {
+    megazordPos.z -= powerRangersStep;
+    avancemegazord += powerRangersStep;
+    if (avancemegazord >= powerRangersLimit) animmegazord = false;
+}
+
+// Alfiles (Esfinge)
+for (size_t i = 0; i < animesfinge.size(); i++) {
+    if (animesfinge[i] && avanceesfinge[i] < powerRangersLimit) {
+        esfingePositions[i].z -= powerRangersStep;
+        avanceesfinge[i] += powerRangersStep;
+        if (avanceesfinge[i] >= powerRangersLimit) animesfinge[i] = false;
+    }
+}
+
+// Caballos (Dragonzord)
+for (size_t i = 0; i < animdragon.size(); i++) {
+    if (animdragon[i] && avancedragon[i] < powerRangersLimit) {
+        dragonPositions[i].z -= powerRangersStep;
+        avancedragon[i] += powerRangersStep;
+        if (avancedragon[i] >= powerRangersLimit) animdragon[i] = false;
+    }
+}
+
+// Torres (Zack)
+for (size_t i = 0; i < animzack.size(); i++) {
+    if (animzack[i] && avancezack[i] < powerRangersLimit) {
+        zackPositions[i].z -= powerRangersStep;
+        avancezack[i] += powerRangersStep;
+        if (avancezack[i] >= powerRangersLimit) animzack[i] = false;
+    }
+}
+
+// Peones (Patrulleros)
+for (size_t i = 0; i < animPatrullero.size(); i++) {
+    if (animpatrullero[i] && avancepatrullero[i] < powerRangersLimit) {
+        patrulleroPositions[i].z -= powerRangersStep;
+        avancepatrullero[i] += powerRangersStep;
+        if (avancepatrullero[i] >= powerRangersLimit) animpatrullero[i] = false;
+    }
+}
+
 
 
 // Is called whenever a key is pressed/released via GLFW
@@ -649,6 +723,44 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		animSnow = true;
 		avanceSnow = 0.0f;
 	}
+	if (key == GLFW_KEY_L && action == GLFW_PRESS) { // Lord Z (Rey)
+	    animlordz = true;
+            avancelordz = 0.0f;
+	}
+	if (key == GLFW_KEY_K && action == GLFW_PRESS) { // Megazord (Reina)
+            animmegazord = true;
+            avancemegazord = 0.0f;
+	}
+	if (key == GLFW_KEY_J && action == GLFW_PRESS) { // Esfinge 1 (Alfil)
+            animesfinge[0] = true;
+            avanceesfinge[0] = 0.0f;
+	}
+	if (key == GLFW_KEY_H && action == GLFW_PRESS) { // Esfinge 2 (Alfil)
+            animesfinge[1] = true;
+            avanceesfinge[1] = 0.0f;
+	}
+	if (key == GLFW_KEY_G && action == GLFW_PRESS) { // Dragonzord 1 (Caballo)
+            animdragon[0] = true;
+            avancedragon[0] = 0.0f;
+	}
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) { // Dragonzord 2 (Caballo)
+            animdragon[1] = true;
+            avancedragon[1] = 0.0f;
+	}
+	if (key == GLFW_KEY_P && action == GLFW_PRESS) { // Zack 1 (Torre)
+            animzack[0] = true;
+            avancezack[0] = 0.0f;
+	}
+	if (key == GLFW_KEY_O && action == GLFW_PRESS) { // Zack 2 (Torre)
+            animzack[1] = true;
+            avancezack[1] = 0.0f;
+	}
+	// Teclas para Patrulleros (peones) - Usando teclas F1-F8
+       for (int i = 0; i < 8; i++) {
+           if (key == GLFW_KEY_F1 + i && action == GLFW_PRESS) {
+               animPatrullero[i] = true;
+               avancePatrullero[i] = 0.0f;
+    }
 }
 
 
@@ -792,4 +904,19 @@ void InitMinecraftCharacters() {
 	for (int i = 0; i < zomPositions.size(); ++i) {
 		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon});
 	}
+
+void InitPowerRangersCharacters(){
+	powerRangersCharacters.push_back("Lord Zedd ", &lordzPos, powerRangers, Rey});
+	powerRangersCharacters.push_back("Megazord ", &megazordPos, powerRangers, Reina};
+	for (size_t i = 0; <esfingePositions.size(); ++i) {
+            powerRangersCharacters.push_back({ "Esfinge " + std::to_string(i+1), &esfingePositions[i], powerRangers, Alfil });
+        }
+	for (size_t i = 0; i < dragonPositions.size(); ++i) {
+            powerRangersCharacters.push_back({ "Dragonzord " + std::to_string(i+1), &dragonPositions[i], powerRangers, Caballo });
+	}
+	for (size_t i = 0; i < zackPositions.size(); ++i) {
+            powerRangersCharacters.push_back({ "Zack " + std::to_string(i+1), &zackPositions[i], powerRangers, Torre });
+        }
+	for (size_t i = 0; i < patrulleroPositions.size(); ++i) {
+            powerRangersCharacters.push_back({ "Patrullero " + std::to_string(i+1), &patrulleroPositions[i], powerRangers, Peon });
 }
