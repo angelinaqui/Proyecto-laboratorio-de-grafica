@@ -142,33 +142,33 @@ std::vector<glm::vec3> zomPositions = {
 std::vector<bool> animZoms(8, false);
 std::vector<float> avanceZoms(8, 0.0f);
 
-glm::vec3 lordzPos(4.0f, 0.0f, 0.0f);
-glm::vec3 megazordPos(3.0f, 0.0f, 0.0f);
+glm::vec3 lordzPos(3.5f, 0.0f, 2.1f);
+glm::vec3 megazordPos(3.5f, 0.0f, 1.4f);
 
 std::vector<glm::vec3> esfingePositions = {
-    {2.0f, 0.0f, 0.0f},
-    {5.0f, 0.0f, 0.0f}
+    {2.1f, 0.0f, 2.1f},
+    {4.9f, 0.0f, 2.1f}
 };
 
 std::vector<glm::vec3> dragonPositions = {
-    {1.0f, 0.0f, 0.0f},
-    {6.0f, 0.0f, 0.0f}
+    {1.5f, 0.0f, 2.1f},
+    {5.5f, 0.0f, 2.1f}
 };
 
 std::vector<glm::vec3> zackPositions = {
-    {0.0f, 0.0f, 0.0f},
-    {7.0f, 0.0f, 0.0f}
+    {0.3f, 0.0f, 2.1f},
+    {6.7f, 0.0f, 2.1f}
 };
 
 std::vector<glm::vec3> patrulleroPositions = {
-    {0.0f, 0.0f, 1.0f},
-    {1.0f, 0.0f, 1.0f},
-    {2.0f, 0.0f, 1.0f},
-    {3.0f, 0.0f, 1.0f},
-    {4.0f, 0.0f, 1.0f},
-    {5.0f, 0.0f, 1.0f},
-    {6.0f, 0.0f, 1.0f},
-    {7.0f, 0.0f, 1.0f}
+    {0.3f, 0.0f, 1.5f},
+    {1.5f, 0.0f, 1.5f},
+    {2.2f, 0.0f, 1.5f},
+    {3.5f, 0.0f, 1.5f},
+    {4.9f, 0.0f, 1.5f},
+    {5.5f, 0.0f, 1.5f},
+    {6.7f, 0.0f, 1.5f},
+    {7.9f, 0.0f, 1.5f}
 };
 //=========================================================================================
 
@@ -231,12 +231,12 @@ int main()
 	Model stev((char*)"Models/stev.obj");
 	Model snow((char*)"Models/snow.obj");
 	Model alex((char*)"Models/alex.obj");
-	Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh.obj");
-    Model megazord((char*)"Models/POWERRANGER.obj");
-    Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
-    Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
-    Model dragon((char*)"Models/MMPR - Dragonzord.obj");
-    Model patrullero((char*)"Models/putty_low.obj");
+Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh.obj");
+Model megazord((char*)"Models/POWERRANGER.obj");
+Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
+Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
+Model dragon((char*)"Models/MMPR - Dragonzord.obj");
+Model patrullero((char*)"Models/putty_low.obj");
 	Model Piso((char*)"Models/tablero.obj");
 	//==========================================================================
 
@@ -418,54 +418,59 @@ int main()
 		//=======================================================================================
 
 		////===============================Dibujado del Lord Z=================================
-		//model = glm::mat4(1); //Rey
-  //      model = glm::translate(glm::mat4(1.0f), lordzPos);
-		//model = glm::scale(model, glm::vec3(0.5f));
-  //      glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-  //      lordz.Draw(lightingShader);
+		model = glm::mat4(1);
+                model = glm::translate(model, lordzPos);
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
+                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                lordz.Draw(lightingShader);
 		////===================================================================================
-  //              
+           
 		////===============================Dibujado del Megazord=================================
-  //      model = glm::translate(glm::mat4(1.0f), megazordPos); //Reyna
-		//model = glm::scale(model, glm::vec3(80.0f));
-  //      glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-  //      megazord.Draw(lightingShader);
+		model = glm::mat4(1);
+                model = glm::translate(model, megazordPos);
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                megazord.Draw(lightingShader);
 		////=====================================================================================
 
 		////===============================Dibujado del Esfinge=================================      
-  //      for (auto& pos : esfingePositions) { // Alfiles
-		//	model = glm::translate(glm::mat4(1.0f), pos);
-		//	model = glm::scale(model, glm::vec3(1.0f));	       
-  //          glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-  //          esfinge.Draw(lightingShader);
-  //      }
+                for (auto& pos : esfingePositions) { 
+		     model = glm::mat4(1);
+		     model = glm::translate(model, pos);
+		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
+                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                     esfinge.Draw(lightingShader);
+                }
 		////====================================================================================
-		//
+		
 		////===============================Dibujado del Dragon================================= 
-  //      for (auto& pos : dragonPositions) {// Caballos
-		//	model = glm::translate(glm::mat4(1.0f), pos);
-		//	model = glm::scale(model, glm::vec3(0.2f));
-  //          glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-  //          dragon.Draw(lightingShader);
-  //      }
+                for (auto& pos : dragonPositions) {
+		     model = glm::mat4(1);
+		     model = glm::translate(model, pos);
+		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°	
+                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                     dragon.Draw(lightingShader);
+                }
 		////===================================================================================
 
 		////===============================Dibujado de Zack=================================
-  //      for (auto& pos : zackPositions) { // Torres
-		//	model = glm::translate(glm::mat4(1.0f), pos);
-		//	model = glm::scale(model, glm::vec3(1.0f));
-		//	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-  //          zack.Draw(lightingShader);
-  //      }
+                for (auto& pos : zackPositions) { 
+		     model = glm::mat4(1.0f);
+		     model = glm::translate(model, pos);
+		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //rotacion 180°	
+		     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                     zack.Draw(lightingShader);
+                }
 		////================================================================================
 
 		////===============================Dibujado de Patrullero=================================
-  //      for (auto& pos : patrulleroPositions) {
-		//	model = glm::translate(glm::mat4(1.0f), pos);
-		//	model = glm::scale(model, glm::vec3(0.015f));
-  //          glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-  //          patrullero.Draw(lightingShader);
-  //      }
+                for (auto& pos : patrulleroPositions) {
+	             model = glm::mat4(1);
+		     model = glm::translate(model, pos);
+		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
+                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                     patrullero.Draw(lightingShader);
+                }
 		////======================================================================================
 
 		glBindVertexArray(0);
