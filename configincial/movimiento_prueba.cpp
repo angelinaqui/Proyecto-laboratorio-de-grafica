@@ -70,6 +70,8 @@ glm::mat4 view;
 // Variable para almacenar el último punto clickeado
 glm::vec3 Light1 = glm::vec3(0);
 
+Board board;
+
 
 // Deltatime
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
@@ -92,7 +94,7 @@ const unsigned int powerRangers = 2;
 
 std::vector<Character> minecraftCharacters;
 Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
-Board board;
+
 
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
 bool animStev = false;
@@ -147,7 +149,7 @@ std::vector<float> avanceZoms(8, 0.0f);
 
 std::vector<Character> powerRangersCharacters;
 Character* selectedPowerRangersCharacter = nullptr;
-Board board;
+
 
 glm::vec3 lordzPos(0.3f, 0.0f, 1.5f);
 bool animlordz = false;
