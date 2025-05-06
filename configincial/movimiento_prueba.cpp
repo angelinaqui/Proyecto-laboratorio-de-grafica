@@ -266,6 +266,8 @@ int main()
 
 	InitMinecraftCharacters();
 	board.initMinecraftBoard(minecraftCharacters);
+	InitPowerRangersCharacters();
+	board.initPowerRangersBoard(powerRangersCharacters);
 
 	// First, set the container's VAO (and VBO)
 	GLuint VBO, VAO;
@@ -486,7 +488,7 @@ int main()
 		////===============================Dibujado de Patrullero=================================
         for (auto& pos : patrulleroPositions) {
 			model = glm::translate(glm::mat4(1.0f), pos);
-			model = glm::scale(model, glm::vec3(0.015f));
+			model = glm::scale(model, glm::vec3(0.15f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             patrullero.Draw(lightingShader);
         }
@@ -850,9 +852,10 @@ void InitMinecraftCharacters() {
 		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon });
 	}
 }
-void InitPowerRangerCharacters() {
+void InitPowerRangersCharacters() {
 	powerRangersCharacters.push_back({ "Lord Zedd", &lordzPos, powerRangers, Rey });
 	powerRangersCharacters.push_back({ "Megazord", &megazordPos, powerRangers, Reyna });
+
 	for (size_t i = 0; i < esfingePositions.size(); ++i) {
 		powerRangersCharacters.push_back({ "Esfinge" + std::to_string(i + 1), &esfingePositions[i], powerRangers, Alfil });
 	}
@@ -866,3 +869,4 @@ void InitPowerRangerCharacters() {
 		powerRangersCharacters.push_back({ "Patrullero" + std::to_string(i + 1), &patrulleroPositions[i], powerRangers, Peon });
 	}
 }
+

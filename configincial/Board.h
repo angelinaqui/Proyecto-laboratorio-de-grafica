@@ -120,6 +120,23 @@ public:
             cells[1][j].occupied = true;
         }
     }
+    void initPowerRangersBoard(std::vector<Character>& powerRangersCharacters) {
+        if (powerRangersCharacters.size() != 16) {
+            std::cerr << "Error: Numero de personajes Power Rangers no admitido por el juego.\n";
+            return;
+        }
+        // Fila superior: piezas especiales (cells[7][0] a [7][7])
+        for (int j = 0; j < 8; j++) {
+            cells[7][j].character = &powerRangersCharacters[j];
+            cells[7][j].occupied = true;
+        }
+        // Fila inferior: peones (cells[6][0] a [6][7])
+        for (int j = 0; j < 8; j++) {
+            cells[6][j].character = &powerRangersCharacters[8 + j];
+            cells[6][j].occupied = true;
+        }
+    }
+
 
     // La metodologia para revisar si el movimiento es valido, es primero descartar todos los movimientos invalidos evidentes
     // TODO: Turnos de juego
