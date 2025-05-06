@@ -31,11 +31,12 @@
 #include "Board.h"
 
 // Function prototypes
-void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode);
-void MouseCallback(GLFWwindow *window, double xPos, double yPos);
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void MouseCallback(GLFWwindow* window, double xPos, double yPos);
 glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void InitMinecraftCharacters();
+void InitPowerRangersCharacters();
 void DoMovement();
 void Animation();
 
@@ -90,7 +91,7 @@ const unsigned int powerRangers = 2;
 // Variables para la animación de stev
 
 std::vector<Character> minecraftCharacters;
-Character* selectedMinecraftCharacter = nullptr; // El personaje actualmente agarrado
+Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
 Board board;
 
 glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
@@ -146,49 +147,51 @@ std::vector<float> avanceZoms(8, 0.0f);
 
 std::vector<Character> powerRangersCharacters;
 Character* selectedPowerRangersCharacter = nullptr;
+Board board;
 
-glm::vec3 lordzPos(3.5f, 0.0f, 2.1f);
+glm::vec3 lordzPos(0.3f, 0.0f, 1.5f);
 bool animlordz = false;
 float avancelordz = 0.0f;
+const float powerRangersLimit = 0.6f;
 
-
-glm::vec3 megazordPos(3.5f, 0.0f, 1.4f);
+glm::vec3 megazordPos(-0.3f, 0.0f, 2.1f);
 bool animmegazord = false;
 float avancemegazord = 0.0f;
 
 std::vector<glm::vec3> esfingePositions = {
-    {2.1f, 0.0f, 2.1f},
-    {4.9f, 0.0f, 2.1f}
+	{-0.9f, 0.0f, 2.1f},
+	{0.9f, 0.0f, 2.1f}
 };
 std::vector<bool> animesfinge(2, false);
 std::vector<float> avanceesfinge(2, 0.0f);
 
 std::vector<glm::vec3> dragonPositions = {
-    {1.5f, 0.0f, 2.1f},
-    {5.5f, 0.0f, 2.1f}
+	{-1.5f, 0.0f, 2.1f},
+	{1.5f, 0.0f, 2.1f}
 };
 std::vector<bool> animdragon(2, false);
 std::vector<float> avancedragon(2, 0.0f);
 
 std::vector<glm::vec3> zackPositions = {
-    {0.3f, 0.0f, 2.1f},
-    {6.7f, 0.0f, 2.1f}
+	{-2.1f, 0.0f, 2.1f},
+	{2.1f, 0.0f, 2.1f}
 };
 std::vector<bool> animzack(2, false);
 std::vector<float> avancezack(2, 0.0f);
 
 std::vector<glm::vec3> patrulleroPositions = {
-    {0.3f, 0.0f, 1.5f},
-    {1.5f, 0.0f, 1.5f},
-    {2.2f, 0.0f, 1.5f},
-    {3.5f, 0.0f, 1.5f},
-    {4.9f, 0.0f, 1.5f},
-    {5.5f, 0.0f, 1.5f},
-    {6.7f, 0.0f, 1.5f},
-    {7.9f, 0.0f, 1.5f}
+	{-2.1f, 0.0f, 1.5f},
+	{-1.5f, 0.0f, 1.5f},
+	{-0.9f, 0.0f, 1.5f},
+	{-0.3f, 0.0f, 1.5f},
+	{0.3f, 0.0f, 1.5f},
+	{0.9f, 0.0f, 1.5f},
+	{1.5f, 0.0f, 1.5f},
+	{2.1f, 0.0f, 1.5f}
 };
 std::vector<bool> animpatrullero(8, false);
 std::vector<float> avancepatrullero(8, 0.0f);
+
 //=========================================================================================
 
 int main()
@@ -241,7 +244,7 @@ int main()
 
 	Shader lightingShader("Shader/lighting.vs", "Shader/lighting.frag");
 	Shader lampShader("Shader/lamp.vs", "Shader/lamp.frag");
-	
+
 	//=============================Carga de modelos=============================
 	Model Dog((char*)"Models/RedDog.obj");
 	Model creep((char*)"Models/creep.obj");
@@ -250,12 +253,12 @@ int main()
 	Model stev((char*)"Models/stev.obj");
 	Model snow((char*)"Models/snow.obj");
 	Model alex((char*)"Models/alex.obj");
-Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh.obj");
-Model megazord((char*)"Models/POWERRANGER.obj");
-Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
-Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
-Model dragon((char*)"Models/MMPR - Dragonzord.obj");
-Model patrullero((char*)"Models/putty_low.obj");
+	Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh.obj");
+	Model megazord((char*)"Models/POWERRANGER.obj");
+	Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
+	Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
+	Model dragon((char*)"Models/MMPR - Dragonzord.obj");
+	Model patrullero((char*)"Models/putty_low.obj");
 	Model Piso((char*)"Models/tablero.obj");
 	//==========================================================================
 
@@ -299,19 +302,19 @@ Model patrullero((char*)"Models/putty_low.obj");
 		// Clear the colorbuffer
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	   
+
 		// OpenGL options
 		glEnable(GL_DEPTH_TEST);
 
-		
-		
+
+
 		//Load Model
-	
+
 
 		// Use cooresponding shader when setting uniforms/drawing objects
 		lightingShader.Use();
 
-                  glUniform1i(glGetUniformLocation(lightingShader.Program, "diffuse"), 0);
+		glUniform1i(glGetUniformLocation(lightingShader.Program, "diffuse"), 0);
 		//glUniform1i(glGetUniformLocation(lightingShader.Program, "specular"),1);
 
 		GLint viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
@@ -322,7 +325,7 @@ Model patrullero((char*)"Models/putty_low.obj");
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.direction"), 0.2f, 1.0f, 0.3f);
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.ambient"), 0.5f, 0.5f, 0.5f); // Ambiente tenue
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"),0.0f, 0.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 0.0f, 0.0f, 0.0f);
 
 		glfwGetCursorPos(window, &xpos, &ypos);
 		spotlightPos = ScreenToWorld(xpos, ypos, 0.0f);
@@ -358,7 +361,7 @@ Model patrullero((char*)"Models/putty_low.obj");
 
 		glm::mat4 model(1);
 
-	
+
 		view = camera.GetViewMatrix();
 
 		//=============================Dibujado del tablero=================================
@@ -369,7 +372,7 @@ Model patrullero((char*)"Models/putty_low.obj");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
 		//=================================================================================
-	
+
 		//===============================Dibujado del Steve==================================
 		model = glm::mat4(1);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -437,63 +440,58 @@ Model patrullero((char*)"Models/putty_low.obj");
 		//=======================================================================================
 
 		////===============================Dibujado del Lord Z=================================
-		model = glm::mat4(1);
-                model = glm::translate(model, lordzPos);
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
-                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                lordz.Draw(lightingShader);
+		model = glm::mat4(1); //Rey
+        model = glm::translate(glm::mat4(1.0f), lordzPos);
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.f)); //Rotacion180°
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        lordz.Draw(lightingShader);
 		////===================================================================================
-           
+              
 		////===============================Dibujado del Megazord=================================
-		model = glm::mat4(1);
-                model = glm::translate(model, megazordPos);
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                megazord.Draw(lightingShader);
+        model = glm::translate(glm::mat4(1.0f), megazordPos); //Reyna
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        megazord.Draw(lightingShader);
 		////=====================================================================================
 
 		////===============================Dibujado del Esfinge=================================      
-                for (auto& pos : esfingePositions) { 
-		     model = glm::mat4(1);
-		     model = glm::translate(model, pos);
-		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
-                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                     esfinge.Draw(lightingShader);
-                }
+        for (auto& pos : esfingePositions) { // Alfiles
+			 model = glm::translate(glm::mat4(1.0f), pos);
+			 model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
+             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+             esfinge.Draw(lightingShader);
+        }
 		////====================================================================================
-		
+	
 		////===============================Dibujado del Dragon================================= 
-                for (auto& pos : dragonPositions) {
-		     model = glm::mat4(1);
-		     model = glm::translate(model, pos);
-		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°	
-                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                     dragon.Draw(lightingShader);
-                }
+        for (auto& pos : dragonPositions) {// Caballos
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            dragon.Draw(lightingShader);
+        }
 		////===================================================================================
 
 		////===============================Dibujado de Zack=================================
-                for (auto& pos : zackPositions) { 
-		     model = glm::mat4(1.0f);
-		     model = glm::translate(model, pos);
-		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //rotacion 180°	
-		     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                     zack.Draw(lightingShader);
-                }
+        for (auto& pos : zackPositions) { // Torres
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            zack.Draw(lightingShader);
+        }
 		////================================================================================
 
 		////===============================Dibujado de Patrullero=================================
-                for (auto& pos : patrulleroPositions) {
-	             model = glm::mat4(1);
-		     model = glm::translate(model, pos);
-		     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion 180°
-                     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                     patrullero.Draw(lightingShader);
-                }
+        for (auto& pos : patrulleroPositions) {
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::scale(model, glm::vec3(0.015f));
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            patrullero.Draw(lightingShader);
+        }
 		////======================================================================================
 
 		glBindVertexArray(0);
-	
+
 
 		// Also draw the lamp object, again binding the appropriate shader
 		lampShader.Use();
@@ -549,10 +547,11 @@ void DoMovement()
 
 
 	}
-	
+
 }
 void Animation() {
 	float paso = 0.01f;
+	float powerRangersPaso = 0.01f;
 
 	if (animStev && avanceStev < limiteAvance) {
 		stevPos.z += paso;
@@ -601,60 +600,43 @@ void Animation() {
 		avanceEnder2 += paso;
 		if (avanceEnder2 >= limiteAvance) animEnder2 = false;
 	}
-}
-
-// Animaciones de Power Rangers
-const float powerRangersStep = 0.01f; // Velocidad de movimiento
-const float powerRangersLimit = 0.6f; // Límite de movimiento
-
-// Rey (Lord Zedd)
-if (animlordz && avancelordz < powerRangersLimit) {
-    lordzPos.z -= powerRangersStep; // Mueve hacia adelante (coordenada Z disminuye)
-    avanceLordZ += powerRangersStep;
-    if (avancelordz >= powerRangersLimit) animlordz = false;
-}
-
-// Reina (Megazord)
-if (animmegazord && avancemegazord < powerRangersLimit) {
-    megazordPos.z -= powerRangersStep;
-    avancemegazord += powerRangersStep;
-    if (avancemegazord >= powerRangersLimit) animmegazord = false;
-}
-
-// Alfiles (Esfinge)
-for (size_t i = 0; i < animesfinge.size(); i++) {
-    if (animesfinge[i] && avanceesfinge[i] < powerRangersLimit) {
-        esfingePositions[i].z -= powerRangersStep;
-        avanceesfinge[i] += powerRangersStep;
-        if (avanceesfinge[i] >= powerRangersLimit) animesfinge[i] = false;
-    }
-}
-
-// Caballos (Dragonzord)
-for (size_t i = 0; i < animdragon.size(); i++) {
-    if (animdragon[i] && avancedragon[i] < powerRangersLimit) {
-        dragonPositions[i].z -= powerRangersStep;
-        avancedragon[i] += powerRangersStep;
-        if (avancedragon[i] >= powerRangersLimit) animdragon[i] = false;
-    }
-}
-
-// Torres (Zack)
-for (size_t i = 0; i < animzack.size(); i++) {
-    if (animzack[i] && avancezack[i] < powerRangersLimit) {
-        zackPositions[i].z -= powerRangersStep;
-        avancezack[i] += powerRangersStep;
-        if (avancezack[i] >= powerRangersLimit) animzack[i] = false;
-    }
-}
-
-// Peones (Patrulleros)
-for (size_t i = 0; i < animPatrullero.size(); i++) {
-    if (animpatrullero[i] && avancepatrullero[i] < powerRangersLimit) {
-        patrulleroPositions[i].z -= powerRangersStep;
-        avancepatrullero[i] += powerRangersStep;
-        if (avancepatrullero[i] >= powerRangersLimit) animpatrullero[i] = false;
-    }
+	if (animlordz && avancelordz < powerRangersLimit) { //Rey
+		lordzPos.z -= powerRangersPaso;
+		avancelordz + -powerRangersPaso;
+		if (avancelordz >= powerRangersLimit) animlordz = false;
+	}
+	if (animmegazord && avancemegazord < powerRangersLimit) { //Reina
+		megazordPos.z -= powerRangersPaso;
+		avancemegazord += powerRangersPaso;
+		if (avancemegazord >= powerRangersLimit) animmegazord = false;
+	}
+	for (size_t i = 0; i < animesfinge.size(); i++) { //alfiles
+		if (animesfinge[i] && avanceesfinge[i] < powerRangersLimit) {
+			esfingePositions[i].z -= powerRangersPaso;
+			if (avanceesfinge[i] >= powerRangersLimit) animesfinge[i] = false;
+		}
+	}
+	for (size_t i = 0; i < animdragon.size(); i++) { //Caballos
+		if (animdragon[i] && avancedragon[i] < powerRangersLimit) {
+			dragonPositions[i].z -= powerRangersPaso;
+			avancedragon[i] += powerRangersPaso;
+			if (avancedragon[i] >= powerRangersLimit) animdragon[i] = false;
+		}
+	}
+	for (size_t i = 0; i < animzack.size(); i++) { //Torres
+		if (animzack[i] && avancezack[i] < powerRangersLimit) {
+			zackPositions[i].z -= powerRangersPaso;
+			avancezack[i] += powerRangersPaso;
+			if (avancezack[i] > powerRangersLimit) animzack[i] = false;
+		}
+	}
+	for (size_t i = 0; i < animpatrullero.size(); i++) {
+		if (animpatrullero[i] && avancepatrullero[i] < powerRangersLimit) {
+			patrulleroPositions[i].z -= powerRangersPaso;
+			avancepatrullero[i] >= powerRangersPaso;
+			if (avancepatrullero[i] >= powerRangersLimit) animpatrullero[i] = false;
+		}
+	}
 }
 
 
@@ -722,44 +704,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		animSnow = true;
 		avanceSnow = 0.0f;
 	}
-	if (key == GLFW_KEY_L && action == GLFW_PRESS) { // Lord Z (Rey)
-	    animlordz = true;
-            avancelordz = 0.0f;
-	}
-	if (key == GLFW_KEY_K && action == GLFW_PRESS) { // Megazord (Reina)
-            animmegazord = true;
-            avancemegazord = 0.0f;
-	}
-	if (key == GLFW_KEY_J && action == GLFW_PRESS) { // Esfinge 1 (Alfil)
-            animesfinge[0] = true;
-            avanceesfinge[0] = 0.0f;
-	}
-	if (key == GLFW_KEY_H && action == GLFW_PRESS) { // Esfinge 2 (Alfil)
-            animesfinge[1] = true;
-            avanceesfinge[1] = 0.0f;
-	}
-	if (key == GLFW_KEY_G && action == GLFW_PRESS) { // Dragonzord 1 (Caballo)
-            animdragon[0] = true;
-            avancedragon[0] = 0.0f;
-	}
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) { // Dragonzord 2 (Caballo)
-            animdragon[1] = true;
-            avancedragon[1] = 0.0f;
-	}
-	if (key == GLFW_KEY_P && action == GLFW_PRESS) { // Zack 1 (Torre)
-            animzack[0] = true;
-            avancezack[0] = 0.0f;
-	}
-	if (key == GLFW_KEY_O && action == GLFW_PRESS) { // Zack 2 (Torre)
-            animzack[1] = true;
-            avancezack[1] = 0.0f;
-	}
-	// Teclas para Patrulleros (peones) - Usando teclas F1-F8
-       for (int i = 0; i < 8; i++) {
-           if (key == GLFW_KEY_F1 + i && action == GLFW_PRESS) {
-               animPatrullero[i] = true;
-               avancePatrullero[i] = 0.0f;
-    }
 }
 
 
@@ -871,11 +815,11 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 				originZ = posClic.z;						// Guarda las coordenadas de inicio
 			}
 		}
-		else{
+		else {
 			// Si tienes un personaje seleccionado, intenta soltarlo
 			destinationX = posClic.x;
 			destinationZ = posClic.z;			// Coordenadas de destino
-			if(!board.move(originX, originZ, destinationX, destinationZ)) return;	//Si no se pudo mover, termina
+			if (!board.move(originX, originZ, destinationX, destinationZ)) return;	//Si no se pudo mover, termina
 			diffuseSL.y = diffuseSL.z = 1.0f;		// Se resetea la luz
 			pick_place = true;						// Se cambia de modo
 		}
@@ -901,22 +845,22 @@ void InitMinecraftCharacters() {
 	minecraftCharacters.push_back({ "Creeper", &creepPos, minecraft, Torre }); // cells[0][7]
 	// Zombies (se asignarán a otras celdas después)
 	for (int i = 0; i < zomPositions.size(); ++i) {
-		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon});
+		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon });
 	}
-
-	void InitPowerRangersCharacters() {
-		powerRangersCharacters.push_back({ "Lord Zedd", &lordzPos, powerRangers, Rey });
-		powerRangersCharacters.push_back({ "Megazord", &megazordPos, powerRangers, Reina });
-		for (size_t i = 0; i < esfingePositions.size(); ++i) {
-			powerRangersCharacters.push_back({ "Esfinge " + std::to_string(i + 1), &esfingePositions[i], powerRangers, Alfil });
-		}
-		for (size_t i = 0; i < dragonPositions.size(); ++i) {
-			powerRangersCharacters.push_back({ "Dragonzord " + std::to_string(i + 1), &dragonPositions[i], powerRangers, Caballo });
-		}
-		for (size_t i = 0; i < zackPositions.size(); ++i) {
-			powerRangersCharacters.push_back({ "Zack " + std::to_string(i + 1), &zackPositions[i], powerRangers, Torre });
-		}
-		for (size_t i = 0; i < patrulleroPositions.size(); ++i) {
-			powerRangersCharacters.push_back({ "Patrullero " + std::to_string(i + 1), &patrulleroPositions[i], powerRangers, Peon });
-		}
+}
+void InitPowerRangerCharacters() {
+	powerRangersCharacters.push_back({ "Lord Zedd", &lordzPos, powerRangers, Rey });
+	powerRangersCharacters.push_back({ "Megazord", &megazordPos, powerRangers, Reyna });
+	for (size_t i = 0; i < esfingePositions.size(); ++i) {
+		powerRangersCharacters.push_back({ "Esfinge" + std::to_string(i + 1), &esfingePositions[i], powerRangers, Alfil });
 	}
+	for (size_t i = 0; i < dragonPositions.size(); ++i) {
+		powerRangersCharacters.push_back({ "Dragozord" + std::to_string(i + 1), &dragonPositions[i], powerRangers, Caballo });
+	}
+	for (size_t i = 0; i < zackPositions.size(); ++i) {
+		powerRangersCharacters.push_back({ "Zack" + std::to_string(i + 1), &zackPositions[i], powerRangers, Torre });
+	}
+	for (size_t i = 0; i < patrulleroPositions.size(); ++i) {
+		powerRangersCharacters.push_back({ "Patrullero" + std::to_string(i + 1), &patrulleroPositions[i], powerRangers, Peon });
+	}
+}
