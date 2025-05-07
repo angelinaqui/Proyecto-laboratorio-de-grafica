@@ -94,39 +94,39 @@ const unsigned int powerRangers = 2;
 //=====================Variables que deinen la posicion de los modelos=====================
 // Variables para la animación de stev
 
-std::vector<Character> minecraftCharacters;
+std::vector<Character> minecraftCharacters; //Vector para almacenar los personajes del equipo Minecraft
 Character* selectedCharacter = nullptr; // El personaje actualmente agarrado
 
-
-glm::vec3 stevPos(-0.3f, 0.0f, -2.1f);
-bool animStev = false;
-float avanceStev = 0.0f; // cuánto ha avanzado desde que se activó
+//================================Posiciones iniciales y variables de animacion para cada personaje de Minecraft======================================================
+glm::vec3 stevPos(-0.3f, 0.0f, -2.1f); //Posicion de Steve
+bool animStev = false; //Indica si Steve esta en animacion
+float avanceStev = 0.0f; // Cuánto ha avanzado desde que se activó
 const float limiteAvance = 0.6f; // límite de movimiento
 
-glm::vec3 creepPos(2.1f, 0.0f, -2.1f);
-bool animCreep = false;
-float avanceCreep = 0.0f;
+glm::vec3 creepPos(2.1f, 0.0f, -2.1f); //Posicion de Creepper
+bool animCreep = false; //Indica si Creeper esta en animacion
+float avanceCreep = 0.0f; //Cuánto ha avanzado desde que se activó
 
-glm::vec3 enderPos(0.9f, 0.0f, -2.1f);
-bool animEnder = false;
-float avanceEnder = 0.0f;
+glm::vec3 enderPos(0.9f, 0.0f, -2.1f); //Posicion de Enderman
+bool animEnder = false; //Indica si Enderman esta en animacion
+float avanceEnder = 0.0f; //Cuánto ha avanzado desde que se activó
 
-glm::vec3 snowPos(1.5f, 0.0f, -2.1f);
-bool animSnow = false;
-float avanceSnow = 0.0f;
+glm::vec3 snowPos(1.5f, 0.0f, -2.1f); //Posicion de Snowman
+bool animSnow = false; //Indica si Snowman esta en animacion
+float avanceSnow = 0.0f; //Cuánto ha avanzado desde que se activó
 
-glm::vec3 alexPos(0.3f, -0.4f, -2.1f);
-bool animAlex = false;
-float avanceAlex = 0.0f;
-
+glm::vec3 alexPos(0.3f, -0.4f, -2.1f); //Posicion de Alex
+bool animAlex = false; //Indica si Alex esta en animacion
+float avanceAlex = 0.0f; //Cuánto ha avanzado desde que se activó
+//===Sigue la misma logica que Creepper===
 glm::vec3 creep2Pos(-2.1f, 0.0f, -2.1f);
 bool animCreep2 = false;
 float avanceCreep2 = 0.0f;
-
+//===Sigue la misma logica que Snowman===
 glm::vec3 snow2Pos(-1.5f, 0.0f, -2.1f);
 bool animSnow2 = false;
 float avanceSnow2 = 0.0f;
-
+//===Sigue la misma logica que Enderman===
 glm::vec3 ender2Pos(-0.9f, 0.0f, -2.1f);
 bool animEnder2 = false;
 float avanceEnder2 = 0.0f;
@@ -143,47 +143,47 @@ std::vector<glm::vec3> zomPositions = {
 	glm::vec3(1.5f, 0.0f, -1.5f),
 	glm::vec3(2.1f, 0.0f, -1.5f)
 };
-
+//Estados de animacion y avance de cada peon zombie
 std::vector<bool> animZoms(8, false);
 std::vector<float> avanceZoms(8, 0.0f);
 
-//MM Power Rangers
+//MM Power Rangers==============Variables para personajes de Power Rangers============================================
 
-std::vector<Character> powerRangersCharacters;
-Character* selectedPowerRangersCharacter = nullptr;
+std::vector<Character> powerRangersCharacters; // Vector para almacenar los personajes del equipo Power Rangers
+Character* selectedPowerRangersCharacter = nullptr; // Personaje seleccionado actual
 
 
-
-glm::vec3 lordzPos(0.3f, 0.0f, 2.1f);
-bool animlordz = false;
+//Posiciones y animaciones individuales
+glm::vec3 lordzPos(0.3f, 0.0f, 2.1f); //Posicion de Lord Zedd
+bool animlordz = false; //Indica si Lord Zedd esta en animacion
 float avancelordz = 0.0f;
-const float powerRangersLimit = 0.6f;
+const float powerRangersLimit = 0.6f; //Limite de movimiento para los Power Rangers
 
-glm::vec3 megazordPos(-0.0f, 0.0f, 2.1f);
-bool animmegazord = false;
+glm::vec3 megazordPos(-0.0f, 0.0f, 2.1f); //Posicion de MegaZord
+bool animmegazord = false; //Indica si MegaZord esta en animacion
 float avancemegazord = 0.0f;
-
+// Posiciones y estados de animación para las esfinges
 std::vector<glm::vec3> esfingePositions = {
 	{-0.9f, 0.0f, 2.1f},
 	{0.9f, 0.0f, 2.1f}
 };
 std::vector<bool> animesfinge(2, false);
 std::vector<float> avanceesfinge(2, 0.0f);
-
+// Posiciones y estados para los dragones
 std::vector<glm::vec3> dragonPositions = {
 	{-1.5f, 0.0f, 2.1f},
 	{1.5f, 0.0f, 2.1f}
 };
 std::vector<bool> animdragon(2, false);
 std::vector<float> avancedragon(2, 0.0f);
-
+// Posiciones y animaciones para los personajes "Zack"
 std::vector<glm::vec3> zackPositions = {
 	{-3.7f, 0.5f, 1.5f},
 	{0.4f, 0.5f, 1.5f}
 };
 std::vector<bool> animzack(2, false);
 std::vector<float> avancezack(2, 0.0f);
-
+// Posiciones y animaciones para los "patrulleros"
 std::vector<glm::vec3> patrulleroPositions = {
 	{-0.7f, 0.0f, 1.5f},
 	{-0.1f, 0.0f, 1.5f},
