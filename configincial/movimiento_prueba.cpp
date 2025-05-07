@@ -1,80 +1,81 @@
-#include <iostream>
-#include <cmath>
-#include <vector>
-#include <map>
-#include <iomanip> // para std::fixed y std::setprecision
+#include <iostream> //Entrada y salida estándar
+#include <cmath> //Funciones matemáticas estándar
+#include <vector> //Contenedor dinámico tipo vector
+#include <map> //Contenedor tipo mapa
+#include <iomanip> // para std::fixed y std::setprecision; manipulacion de salida formateada
 
 
 // GLEW
-#include <GL/glew.h>
+#include <GL/glew.h> //Extensiones OpenGL. Necesario para manejar funciones modernas de OpenGL
 
 // GLFW
-#include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h> //Librería para crear vebtanas y gestionar inputs del usuario
 
 // Other Libs
-#include "stb_image.h"
+#include "stb_image.h" //Cargar imágenes (usualmente texturas)
 
 // GLM Mathematics
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp> //Librería matemática orientada a gráficos
+#include <glm/gtc/matrix_transform.hpp> //Para generar matrices de transformacion
+#include <glm/gtc/type_ptr.hpp> //Para convertir matrices a punteros
 
 //Load Models
-#include "SOIL2/SOIL2.h"
+#include "SOIL2/SOIL2.h" //Librería para carga de texturas (similar a stb_image)
 
 
-// Other includes
-#include "Shader.h"
-#include "Camera.h"
-#include "Model.h"
-#include "Character.h"
-#include "Board.h"
+// Other includes -- Inclusion de clases propias del proyecto
+#include "Shader.h" //Clase para manejar shaders
+#include "Camera.h" //Clase para manejar cámara
+#include "Model.h" //Clase para manejar modelos 3D
+#include "Character.h" //Clase que representa un personaje
+#include "Board.h" //Clase que representa el tablero (Ajedrez)
 
 
-// Function prototypes
+// Function prototypes -- Prototipos de funciones de callbacks y lógica del juego
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow* window, double xPos, double yPos);
-glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY);
-void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void InitMinecraftCharacters();
-void InitPowerRangersCharacters();
-void DoMovement();
-void Animation();
+glm::vec3 ScreenToWorld(double xpos, double ypos, float planeY); //Convierte coordenadas de pantalla a mundo
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods); 
+void InitMinecraftCharacters(); //Inicializa personajes estilo MineCraft
+void InitPowerRangersCharacters(); //Inicializa personajes estilo Power Rangers
+void DoMovement(); //Logica para mover personajes o camara
+void Animation(); //Logica para animaciones
 
-// Window dimensions
+// Window dimensions -- Dimensiones de ventana
 const GLuint WIDTH = 800, HEIGHT = 600;
-int SCREEN_WIDTH, SCREEN_HEIGHT;
+int SCREEN_WIDTH, SCREEN_HEIGHT; //Variables para guardar dimensiones reales
 
 // Camera
-Camera  camera(glm::vec3(0.0f, 3.0f, 5.0f));
-GLfloat lastX = WIDTH / 2.0;
-GLfloat lastY = HEIGHT / 2.0;
-bool keys[1024];
-bool firstMouse = true;
+Camera  camera(glm::vec3(0.0f, 3.0f, 5.0f)); //Inicializa camara en cierta posicion
+GLfloat lastX = WIDTH / 2.0; //Ultima posicion del mouse en X
+GLfloat lastY = HEIGHT / 2.0; //Ultima posicion del mouse en Y
+bool keys[1024]; // Arreglo para gestionar teclas presionadas
+bool firstMouse = true; //Detecta el primer movimiento del mouse
 // Light attributes
-glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
-glm::vec3 spotlightPos(0.0f);
-glm::vec3 lightDir(0.0f);
-bool pick_place = true; // true->pick, false->place
-bool active;
+glm::vec3 lightPos(0.0f, 0.0f, 0.0f); //Posicion de la luz principal
+glm::vec3 spotlightPos(0.0f); //Posicion del spotlight (linterna, foco)
+glm::vec3 lightDir(0.0f); //Direccion del spotlight 
+bool pick_place = true; //Alterna entre modo "recoger" y "colocar"
+bool active; // true->pick, false->place -- Indica si algo esta activo (seleccion)
 //Posiciones para mover sportlight
 double xpos, ypos;
 // Coordenadas para mover personaje
-float originX, originZ, destinationX, destinationZ = 999.0f;
+float originX, originZ, destinationX, destinationZ = 999.0f; //999 puede ser un valor "no válido"
 //Variables para color de spotlight
-glm::vec3 ambientSL(0.5f);
-glm::vec3 diffuseSL(1.0f);
-glm::vec3 specularSL(1.0f);
+glm::vec3 ambientSL(0.5f); //Componente ambiental
+glm::vec3 diffuseSL(1.0f); //Componenete difusa
+glm::vec3 specularSL(1.0f); // Componenete especular
 
+//Matrices de proyeccion y vista de la camara
 glm::mat4 projection;
 glm::mat4 view;
 // Variable para almacenar el último punto clickeado
 glm::vec3 Light1 = glm::vec3(0);
-
+//Instancia del tablero
 Board board;
 
 
-// Deltatime
+// Deltatime -- Variables de tiempo para animaciones o movimientos suaves
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
