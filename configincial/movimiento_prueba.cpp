@@ -151,7 +151,7 @@ std::vector<Character> powerRangersCharacters;
 Character* selectedPowerRangersCharacter = nullptr;
 
 
-glm::vec3 lordzPos(0.3f, 0.0f, 1.5f);
+glm::vec3 lordzPos(0.3f, 0.0f, 2.1f);
 bool animlordz = false;
 float avancelordz = 0.0f;
 const float powerRangersLimit = 0.6f;
