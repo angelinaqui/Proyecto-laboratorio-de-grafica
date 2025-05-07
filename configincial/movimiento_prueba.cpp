@@ -149,7 +149,6 @@ std::vector<float> avanceZoms(8, 0.0f);
 
 std::vector<Character> powerRangersCharacters;
 Character* selectedPowerRangersCharacter = nullptr;
-Board board;
 
 
 glm::vec3 lordzPos(0.3f, 0.0f, 2.1f);
