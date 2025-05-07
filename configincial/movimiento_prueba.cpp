@@ -30,6 +30,7 @@
 #include "Character.h"
 #include "Board.h"
 
+
 // Function prototypes
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void MouseCallback(GLFWwindow* window, double xPos, double yPos);
@@ -149,7 +150,7 @@ std::vector<float> avanceZoms(8, 0.0f);
 
 std::vector<Character> powerRangersCharacters;
 Character* selectedPowerRangersCharacter = nullptr;
-Board board;
+
 
 
 glm::vec3 lordzPos(0.3f, 0.0f, 2.1f);
@@ -157,7 +158,7 @@ bool animlordz = false;
 float avancelordz = 0.0f;
 const float powerRangersLimit = 0.6f;
 
-glm::vec3 megazordPos(-0.3f, 0.0f, 2.1f);
+glm::vec3 megazordPos(-0.0f, 0.0f, 2.1f);
 bool animmegazord = false;
 float avancemegazord = 0.0f;
 
@@ -176,21 +177,21 @@ std::vector<bool> animdragon(2, false);
 std::vector<float> avancedragon(2, 0.0f);
 
 std::vector<glm::vec3> zackPositions = {
-	{-2.1f, 0.0f, 2.1f},
-	{2.1f, 0.0f, 2.1f}
+	{-3.7f, 0.5f, 1.5f},
+	{0.4f, 0.5f, 1.5f}
 };
 std::vector<bool> animzack(2, false);
 std::vector<float> avancezack(2, 0.0f);
 
 std::vector<glm::vec3> patrulleroPositions = {
-	{-2.1f, 0.0f, 1.5f},
-	{-1.5f, 0.0f, 1.5f},
-	{-0.9f, 0.0f, 1.5f},
-	{-0.3f, 0.0f, 1.5f},
-	{0.3f, 0.0f, 1.5f},
-	{0.9f, 0.0f, 1.5f},
-	{1.5f, 0.0f, 1.5f},
-	{2.1f, 0.0f, 1.5f}
+	{-0.7f, 0.0f, 1.5f},
+	{-0.1f, 0.0f, 1.5f},
+	{0.5f, 0.0f, 1.5f},
+	{1.1f, 0.0f, 1.5f},
+	{1.7f, 0.0f, 1.5f},
+	{2.3f, 0.0f, 1.5f},
+	{2.9f, 0.0f, 1.5f},
+	{3.5f, 0.0f, 1.5f}
 };
 std::vector<bool> animpatrullero(8, false);
 std::vector<float> avancepatrullero(8, 0.0f);
@@ -623,6 +624,7 @@ void Animation() {
 	for (size_t i = 0; i < animesfinge.size(); i++) { //alfiles
 		if (animesfinge[i] && avanceesfinge[i] < powerRangersLimit) {
 			esfingePositions[i].z -= powerRangersPaso;
+
 			if (avanceesfinge[i] >= powerRangersLimit) animesfinge[i] = false;
 		}
 	}
@@ -643,7 +645,7 @@ void Animation() {
 	for (size_t i = 0; i < animpatrullero.size(); i++) {
 		if (animpatrullero[i] && avancepatrullero[i] < powerRangersLimit) {
 			patrulleroPositions[i].z -= powerRangersPaso;
-			avancepatrullero[i] >= powerRangersPaso;
+			avancepatrullero[i] += powerRangersPaso;
 			if (avancepatrullero[i] >= powerRangersLimit) animpatrullero[i] = false;
 		}
 	}
