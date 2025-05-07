@@ -9,7 +9,11 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
+<<<<<<< HEAD
 map_Kd texures/Zedd_S01_T1_lordZedd_D.png
+=======
+map_Kd textures/Zedd_S01_T1_lordZedd_D.png
+>>>>>>> refs/remotes/origin/master
 
 newmtl Zedd_S01_T1_staff_D
 Ns 19.999990
@@ -19,4 +23,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
+<<<<<<< HEAD
 map_Kd texures/Zedd_S01_T1_staff_D.png
+=======
+map_Kd textures/Zedd_S01_T1_staff_D.png
+>>>>>>> refs/remotes/origin/master

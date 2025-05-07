@@ -446,6 +446,7 @@ int main()
 		////===============================Dibujado del Lord Z=================================
 		model = glm::mat4(1); //Rey
         model = glm::translate(glm::mat4(1.0f), lordzPos);
+		model = glm::scale(model, glm::vec3(1.195f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.f)); //Rotacion180°
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         lordz.Draw(lightingShader);
@@ -461,6 +462,7 @@ int main()
 		////===============================Dibujado del Esfinge=================================      
         for (auto& pos : esfingePositions) { // Alfiles
 			 model = glm::translate(glm::mat4(1.0f), pos);
+		         model = glm::scale(model, glm::vec3(1.3f)); 
 			 model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
              esfinge.Draw(lightingShader);
@@ -470,6 +472,7 @@ int main()
 		////===============================Dibujado del Dragon================================= 
         for (auto& pos : dragonPositions) {// Caballos
 			model = glm::translate(glm::mat4(1.0f), pos);
+		        model = glm::scale(model, glm::vec3(1.3f));
 			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             dragon.Draw(lightingShader);
@@ -479,6 +482,7 @@ int main()
 		////===============================Dibujado de Zack=================================
         for (auto& pos : zackPositions) { // Torres
 			model = glm::translate(glm::mat4(1.0f), pos);
+		        model = glm::scale(model, glm::vec3(0.85f));
 			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             zack.Draw(lightingShader);
@@ -488,7 +492,7 @@ int main()
 		////===============================Dibujado de Patrullero=================================
         for (auto& pos : patrulleroPositions) {
 			model = glm::translate(glm::mat4(1.0f), pos);
-			model = glm::scale(model, glm::vec3(0.15f));
+			model = glm::scale(model, glm::vec3(1.1f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             patrullero.Draw(lightingShader);
         }
