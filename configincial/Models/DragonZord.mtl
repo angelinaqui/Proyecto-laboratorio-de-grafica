@@ -9,5 +9,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd C:/Users/juani/Downloads/OneDrive/Desktop/Charger/Charger/DragonZord/Dgzd_S01_T1_dragonzord_D.png
-map_Bump C:/Users/juani/Downloads/OneDrive/Desktop/Charger/Charger/DragonZord/Dgzd_S01_T1_dragonzord_N.png
+map_Kd textures/Dgzd_S01_T1_dragonzord_D.png
+map_Bump textures/Dgzd_S01_T1_dragonzord_N.png
