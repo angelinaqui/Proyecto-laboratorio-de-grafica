@@ -256,12 +256,12 @@ int main()
 	Model stev((char*)"Models/stev.obj");
 	Model snow((char*)"Models/snow.obj");
 	Model alex((char*)"Models/alex.obj");
-	Model lordz((char*)"Models/Zedd_S01_T1_lordZedd_msh.obj");
-	Model megazord((char*)"Models/POWERRANGER.obj");
-	Model esfinge((char*)"Models/Gldr_S01_T1_king_msh.obj");
-	Model zack((char*)"Models/RngM_S01_T1_black_msh.obj");
-	Model dragon((char*)"Models/MMPR - Dragonzord.obj");
-	Model patrullero((char*)"Models/putty_low.obj");
+	Model lordz((char*)"Models/LordZedd.obj");
+	Model megazord((char*)"Models/MegaZord.obj");
+	Model esfinge((char*)"Models/ReyEsfinge.obj");
+	Model zack((char*)"Models/BlackRanger.obj");
+	Model dragon((char*)"Models/DragonZord.obj");
+	Model patrullero((char*)"Models/Patrullero.obj");
 	Model Piso((char*)"Models/tablero.obj");
 	//==========================================================================
 
