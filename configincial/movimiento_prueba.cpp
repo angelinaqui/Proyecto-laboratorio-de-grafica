@@ -642,7 +642,7 @@ void Animation() {
 	for (size_t i = 0; i < animpatrullero.size(); i++) {
 		if (animpatrullero[i] && avancepatrullero[i] < powerRangersLimit) {
 			patrulleroPositions[i].z -= powerRangersPaso;
-			avancepatrullero[i] >= powerRangersPaso;
+			avancepatrullero[i] += powerRangersPaso;
 			if (avancepatrullero[i] >= powerRangersLimit) animpatrullero[i] = false;
 		}
 	}
