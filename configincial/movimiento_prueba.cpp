@@ -612,7 +612,7 @@ void Animation() {
 	}
 	if (animlordz && avancelordz < powerRangersLimit) { //Rey
 		lordzPos.z -= powerRangersPaso;
-		avancelordz + -powerRangersPaso;
+		avancelordz += powerRangersPaso;
 		if (avancelordz >= powerRangersLimit) animlordz = false;
 	}
 	if (animmegazord && avancemegazord < powerRangersLimit) { //Reina
