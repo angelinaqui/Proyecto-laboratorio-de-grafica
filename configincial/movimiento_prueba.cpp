@@ -154,45 +154,45 @@ Character* selectedPowerRangersCharacter = nullptr; // Personaje seleccionado ac
 
 
 //Posiciones y animaciones individuales
-glm::vec3 lordzPos(0.3f, 0.0f, 2.1f); //Posicion de Lord Zedd
+glm::vec3 lordzPos(0.3f, -0.4f, 2.1f); //Posicion de Lord Zedd
 bool animlordz = false; //Indica si Lord Zedd esta en animacion
 float avancelordz = 0.0f;
 const float powerRangersLimit = 0.6f; //Limite de movimiento para los Power Rangers
 
-glm::vec3 megazordPos(-0.0f, 0.0f, 2.1f); //Posicion de MegaZord
+glm::vec3 megazordPos(-0.0f, -0.4f, 2.1f); //Posicion de MegaZord
 bool animmegazord = false; //Indica si MegaZord esta en animacion
 float avancemegazord = 0.0f;
 // Posiciones y estados de animación para las esfinges
 std::vector<glm::vec3> esfingePositions = {
-	{-0.9f, 0.0f, 2.1f},
-	{0.9f, 0.0f, 2.1f}
+	{-0.9f, -0.4f, 2.1f},
+	{0.9f, -0.4f, 2.1f}
 };
 std::vector<bool> animesfinge(2, false);
 std::vector<float> avanceesfinge(2, 0.0f);
 // Posiciones y estados para los dragones
 std::vector<glm::vec3> dragonPositions = {
-	{-1.5f, 0.0f, 2.1f},
-	{1.5f, 0.0f, 2.1f}
+	{-1.5f, -0.4f, 2.1f},
+	{1.5f, -0.4f, 2.1f}
 };
 std::vector<bool> animdragon(2, false);
 std::vector<float> avancedragon(2, 0.0f);
 // Posiciones y animaciones para los personajes "Zack"
 std::vector<glm::vec3> zackPositions = {
-	{-3.7f, 0.5f, 1.5f},
-	{0.4f, 0.5f, 1.5f}
+	{-3.7f, 0.2f, 1.5f},
+	{0.4f, 0.2f, 1.5f}
 };
 std::vector<bool> animzack(2, false);
 std::vector<float> avancezack(2, 0.0f);
 // Posiciones y animaciones para los "patrulleros"
 std::vector<glm::vec3> patrulleroPositions = {
-	{-0.7f, 0.0f, 1.5f},
-	{-0.1f, 0.0f, 1.5f},
-	{0.5f, 0.0f, 1.5f},
-	{1.1f, 0.0f, 1.5f},
-	{1.7f, 0.0f, 1.5f},
-	{2.3f, 0.0f, 1.5f},
-	{2.9f, 0.0f, 1.5f},
-	{3.5f, 0.0f, 1.5f}
+	{-0.7f, -0.4f, 1.5f},
+	{-0.1f, -0.4f, 1.5f},
+	{0.5f,  -0.4f, 1.5f},
+	{1.1f,  -0.4f, 1.5f},
+	{1.7f,  -0.4f, 1.5f},
+	{2.3f, -0.4f, 1.5f},
+	{2.9f,  -0.4f, 1.5f},
+	{3.5f,  -0.4f, 1.5f}
 };
 std::vector<bool> animpatrullero(8, false);
 std::vector<float> avancepatrullero(8, 0.0f);
