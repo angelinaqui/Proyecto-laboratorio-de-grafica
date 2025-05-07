@@ -65,9 +65,9 @@ public:
         auto cellDestination = this->getCellFromPosition(destinationX, destinationZ);   // Calcula la casilla de destino
         Character* piece = cells[cellOrigin.first][cellOrigin.second].character;        // Obtiene al personaje de dicha casilla
 
-         //Si el movimiento no es valido
+        //Si el movimiento no es valido
         if (!this->check_move(piece, cellOrigin.first, cellOrigin.second, cellDestination.first, cellDestination.second)) return false;
-        
+
         if (cells[cellDestination.first][cellDestination.second].occupied) {            //Verificas si existe una pieza en esa casilla
             cells[cellDestination.first][cellDestination.second].character->position->x = 999.0f;
             cells[cellDestination.first][cellDestination.second].character->position->z = 999.0f; //Desaparece de forma rudimentaria la pieza xd
@@ -78,7 +78,7 @@ public:
         std::cout << "De (" << originX << "," << "0.0" << "," << originZ << ")" << " --> [" << cellOrigin.first << "," << cellOrigin.second << "]" << std::endl;
         std::cout << "A (" << destinationX << "," << "0.0" << "," << destinationZ << ")" << "--> [" << cellDestination.first << "," << cellDestination.second << "]" << std::endl;
         cells[cellDestination.first][cellDestination.second].character = piece; //Mueve la pieza
-        cells[cellDestination.first][cellDestination.second].occupied = true;   
+        cells[cellDestination.first][cellDestination.second].occupied = true;
         cells[cellOrigin.first][cellOrigin.second].character = nullptr;         // Limpia el origen
         cells[cellOrigin.first][cellOrigin.second].occupied = false;
         return true;
@@ -242,7 +242,7 @@ public:
 /* Posiciones y casillas
 //Esquina inferior derecha minecraft
 [0,0]-->(-2.1,0,-2.1) --Creeper 2
-[0,1]-->(-1.5,0,-2.1) 
+[0,1]-->(-1.5,0,-2.1)
 [0,2]-->(-0.9,0,-2.1)
 [0,3]-->(-0.3,0,-2.1)
 [0,4]-->(0.3,0,-2.1)
