@@ -377,7 +377,12 @@ int main()
 
 		// Vuelve a obtener la vista por si fue modificada
 		view = camera.GetViewMatrix();
-
+		
+		//================= ===========Dibujado de personajes========================
+                //Nota: .Draw dibuja o manda a llamar a los modelos de cada personaje
+		//Nota2: translate para poner al personaje en su orientación
+		//Nota3: rotate para ayudar a colocar al personaje de forma correcta
+		//Nota4: scale ayuda a que algunos personajes mantengan un tamaño parecido entre todos
 		//=============================Dibujado del tablero=================================
 		model = glm::mat4(1);
 		model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f));                    //  mueve hacia abajo
@@ -508,25 +513,26 @@ int main()
 			patrullero.Draw(lightingShader);
 		}
 		////======================================================================================
-
+                // Desvincula el VAO actual para evitar modificarlo accidentalmente
 		glBindVertexArray(0);
 
-
+                 // Dibuja la lámpara (o fuente de luz) con su propio shader
 		// Also draw the lamp object, again binding the appropriate shader
 		lampShader.Use();
+                // Obtiene las ubicaciones de las matrices 'model', 'view' y 'projection' en el shader de la lámpara
 		// Get location objects for the matrices on the lamp shader (these could be different on a different shader)
 		modelLoc = glGetUniformLocation(lampShader.Program, "model");
 		viewLoc = glGetUniformLocation(lampShader.Program, "view");
 		projLoc = glGetUniformLocation(lampShader.Program, "projection");
-		glBindVertexArray(0);
+		glBindVertexArray(0); //Nuevamente desvincula el VAO por seguridad
 
 
 
-		// Swap the screen buffers
+		// Swap the screen buffers -- Intercambia los buffers de pantalla (doble buffer) para mostrar la imagen renderizada
 		glfwSwapBuffers(window);
 	}
 
-
+         //Termina GLFW y libera los recursos
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 
@@ -534,32 +540,32 @@ int main()
 
 	return 0;
 }
-
+// Procesa el movimiento de la cámara según teclas presionadas
 // Moves/alters the camera positions based on user input
 void DoMovement()
 {
-
+         //Mover hacia adelante
 	// Camera controls
 	if (keys[GLFW_KEY_W] || keys[GLFW_KEY_UP])
 	{
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 
 	}
-
+        //Mover hacia atrás
 	if (keys[GLFW_KEY_S] || keys[GLFW_KEY_DOWN])
 	{
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
 
 
 	}
-
+        //Rotar a la izquierda
 	if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT])
 	{
 		camera.ProcessKeyboard(CIRC_LEFT, deltaTime);
 
 
 	}
-
+        //Rotar a la derecha
 	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
 	{
 		camera.ProcessKeyboard(CIRC_RIGHT, deltaTime);
@@ -568,32 +574,41 @@ void DoMovement()
 	}
 
 }
+// Controla las animaciones de movimiento de personajes
 void Animation() {
-	float paso = 0.01f;
-	float powerRangersPaso = 0.01f;
+	float paso = 0.01f; // Paso de avance para los personajes Minecraft
+	float powerRangersPaso = 0.01f; // Paso para personajes Power Rangers
 
+	// Animaciones individuales para cada personaje
+	// Se incrementa la posición en Z mientras no se alcance el límite
+	// Una vez alcanzado, se detiene la animación
+	
+        // Steve avanza hacia adelante
 	if (animStev && avanceStev < limiteAvance) {
 		stevPos.z += paso;
 		avanceStev += paso;
 		if (avanceStev >= limiteAvance) animStev = false;
-	}
+		
+	}// Creeper retrocede
 	if (animCreep && avanceCreep < limiteAvance) {
 		creepPos.z += paso;  // Retrocede
 		avanceCreep += paso;
 		if (avanceCreep >= limiteAvance) animCreep = false;
-	}
+		
+	}// Enderman avanza
 	if (animEnder && avanceEnder < limiteAvance) {
 		enderPos.z += paso;
 		avanceEnder += paso;
 		if (avanceEnder >= limiteAvance) animEnder = false;
-	}
+		
+	}// Itera sobre todos los zombies para animarlos
 	for (size_t i = 0; i < animZoms.size(); i++) {
 		if (animZoms[i] && avanceZoms[i] < limiteAvance) {
 			zomPositions[i].z += paso;
 			avanceZoms[i] += paso;
 			if (avanceZoms[i] >= limiteAvance) animZoms[i] = false;
 		}
-	}
+	}// Misma lógica para Snowman, Alex, Creeper2, Snow2, Ender2
 	if (animSnow && avanceSnow < limiteAvance) {
 		snowPos.z += paso;
 		avanceSnow += paso;
@@ -618,17 +633,17 @@ void Animation() {
 		ender2Pos.z += paso;
 		avanceEnder2 += paso;
 		if (avanceEnder2 >= limiteAvance) animEnder2 = false;
-	}
+	} //Lord Zedd (Rey) retrocede
 	if (animlordz && avancelordz < powerRangersLimit) { //Rey
 		lordzPos.z -= powerRangersPaso;
 		avancelordz + -powerRangersPaso;
 		if (avancelordz >= powerRangersLimit) animlordz = false;
-	}
+	}// Megazord (Reina) retrocede
 	if (animmegazord && avancemegazord < powerRangersLimit) { //Reina
 		megazordPos.z -= powerRangersPaso;
 		avancemegazord += powerRangersPaso;
 		if (avancemegazord >= powerRangersLimit) animmegazord = false;
-	}
+	} // Misma lógica para Esfinges, Dragones, Zack y Patrulleros
 	for (size_t i = 0; i < animesfinge.size(); i++) { //alfiles
 		if (animesfinge[i] && avanceesfinge[i] < powerRangersLimit) {
 			esfingePositions[i].z -= powerRangersPaso;
@@ -661,14 +676,15 @@ void Animation() {
 
 
 
-// Is called whenever a key is pressed/released via GLFW
+// Is called whenever a key is pressed/released via GLFW -- Funcion que se llama cuando una tecla se presiona o se suelta
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+	//Cierra la ventana si se presiona ESC
 	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
-
+        // Guarda el estado de la tecla (presionada o soltada)
 	if (key >= 0 && key < 1024)
 	{
 		if (action == GLFW_PRESS)
@@ -680,7 +696,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 			keys[key] = false;
 		}
 	}
-
+        // Alterna la luz con la tecla espacio
 	if (keys[GLFW_KEY_SPACE])
 	{
 		active = !active;
@@ -693,13 +709,15 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 			Light1 = glm::vec3(0);//Cuado es solo un valor en los 3 vectores pueden dejar solo una componente
 		}
 	}
+	//Maneja activación de animaciones con teclas específicas
+	// Por ejemplo: V activa animación de Steve
 	if (key == GLFW_KEY_V && action == GLFW_PRESS)
 	{
 		if (!animStev) {
 			animStev = true;
 			avanceStev = 0.0f; // Reinicia avance para que se mueva 2.0 cada vez
 		}
-	}
+	}// Otras teclas para animar personajes específicos (Z, X, C, 9, N, M)
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
 		animCreep2 = true;
 		avanceCreep2 = 0.0f;
@@ -726,7 +744,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 	}
 }
 
-
+//Control de rotacion de camara con el boton central del mouse
 void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	static bool middleButtonPressed = false;
@@ -815,10 +833,13 @@ static bool IsClose(float a, float b, float epsilon = 0.05f) {
 	return fabs(a - b) < epsilon;
 }
 
-
+// Maneja clics del mouse en el tablero
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+	        // Detecta posición del clic y la transforma al tablero
+		// Si estamos en modo "seleccionar personaje", lo agarra
+		// Si ya se tiene uno seleccionado, intenta moverlo a otra celda
 		glfwGetCursorPos(window, &xpos, &ypos);
 		glm::vec3 posClic = ScreenToWorld(xpos, ypos, 0.0f); // Se obtiene la posicion en el tablero
 
@@ -844,7 +865,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 			pick_place = true;						// Se cambia de modo
 		}
 	}
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) { //Cancela la seleccion actual si se presiona clic derecho
 		// Cancelar la selección
 		if (!pick_place) {		// Si se tiene un personaje agarrado
 			diffuseSL.y = diffuseSL.z = 1.0f;
@@ -853,8 +874,9 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	}
 }
 
-
-void InitMinecraftCharacters() {
+//Inicializa personajes del bando Minecraft con su tipo de pieza
+void InitMinecraftCharacters() {//Crea personajes iniciales
+                                //Luego agrega zombies como peones
 	minecraftCharacters.push_back({ "Creeper 2", &creep2Pos, minecraft, Torre });   // cells[0][0]
 	minecraftCharacters.push_back({ "Snowman 2", &snow2Pos, minecraft, Caballo });    // cells[0][1]
 	minecraftCharacters.push_back({ "Enderman 2", &ender2Pos, minecraft, Alfil });   // cells[0][2]
@@ -868,7 +890,9 @@ void InitMinecraftCharacters() {
 		minecraftCharacters.push_back({ "Zombie " + std::to_string(i), &zomPositions[i], minecraft, Peon });
 	}
 }
-void InitPowerRangersCharacters() {
+//Inicializa personajes del bando de Power Rangers
+void InitPowerRangersCharacters() {//Rey y Reina
+	                          //alfiles (Esfinges), Caballos (Dragonzords), Torres (Zack), Peones (Patrulleros) 
 	powerRangersCharacters.push_back({ "Lord Zedd", &lordzPos, powerRangers, Rey });
 	powerRangersCharacters.push_back({ "Megazord", &megazordPos, powerRangers, Reyna });
 
