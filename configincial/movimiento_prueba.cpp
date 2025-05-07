@@ -460,6 +460,7 @@ int main()
 		////===============================Dibujado del Esfinge=================================      
         for (auto& pos : esfingePositions) { // Alfiles
 			 model = glm::translate(glm::mat4(1.0f), pos);
+		         model = glm::scale(model, glm::vec3(1.3f)); 
 			 model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotacion180°
              glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
              esfinge.Draw(lightingShader);
