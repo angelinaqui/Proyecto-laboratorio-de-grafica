@@ -444,6 +444,7 @@ int main()
 		////===============================Dibujado del Lord Z=================================
 		model = glm::mat4(1); //Rey
         model = glm::translate(glm::mat4(1.0f), lordzPos);
+		model = glm::scale(model, glm::vec3(1.195f));
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.f)); //Rotacion180°
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         lordz.Draw(lightingShader);
