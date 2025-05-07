@@ -622,6 +622,7 @@ void Animation() {
 	for (size_t i = 0; i < animesfinge.size(); i++) { //alfiles
 		if (animesfinge[i] && avanceesfinge[i] < powerRangersLimit) {
 			esfingePositions[i].z -= powerRangersPaso;
+			avanceesfinge[i] += powerRangersPaso;
 			if (avanceesfinge[i] >= powerRangersLimit) animesfinge[i] = false;
 		}
 	}
